@@ -1,0 +1,2 @@
+<?php
+return ['project-id-version'=>'Order Delivery Date for WooCommerce (Lite version)','report-msgid-bugs-to'=>'','pot-creation-date'=>'2024-11-28 14:19+0530','po-revision-date'=>'2025-06-16 04:52+0000','last-translator'=>'','language-team'=>'日本語','language'=>'ja','mime-version'=>'1.0','content-type'=>'text/plain; charset=UTF-8','content-transfer-encoding'=>'8bit','plural-forms'=>'nplurals=1; plural=0;','x-generator'=>'Loco https://localise.biz/','x-loco-version'=>'2.8.0; wp-6.8.1; php-8.3.14','messages'=>[]];

@@ -1,0 +1,433 @@
+# Copyright (C) 2025 ThemeHigh
+# This file is distributed under the same license as the Multiple Shipping Addresses for WooCommerce (Address Book) plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Multiple Shipping Addresses for WooCommerce (Address Book) 2.2.9\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/themehigh-multiple-addresses\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-05-23T12:01:06+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.8.1\n"
+"X-Domain: themehigh-multiple-addresses\n"
+
+#. Plugin Name of the plugin
+msgid "Multiple Shipping Addresses for WooCommerce (Address Book)"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://www.themehigh.com/product/woocommerce-multiple-addresses-pro"
+msgstr ""
+
+#. Description of the plugin
+msgid "Add and save multiple billing and shipping addresses. And enable the Multiple-shipping feature for a seamless shopping experience."
+msgstr ""
+
+#. Author of the plugin
+msgid "ThemeHigh"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.themehigh.com/"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:67
+msgid "Drop Down"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:68
+msgid "Pop Up"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:71
+msgid "Button"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:72
+msgid "Link"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:79
+msgid "Enable multiple addresses for billing"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:80
+#: admin/class-thmaf-admin-settings-general.php:86
+msgid "Display type"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:81
+#: admin/class-thmaf-admin-settings-general.php:87
+msgid "Display style"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:82
+msgid "Billing address limit"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:85
+msgid "Enable multiple addresses for shipping"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:88
+msgid "Shipping address limit"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:91
+msgid "Allow products to be shipped to different locations within an order"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:92
+msgid "Multi-shipping for variable product"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:96
+msgid "Address Properties"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:99
+msgid "Multiple Shipping"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:136
+msgid "Your changes were saved."
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:138
+msgid "Your changes were not saved due to an error (or you made none!)."
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:185
+msgid "Settings successfully reset"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:274
+msgid "Save changes"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings-general.php:275
+msgid "Reset to default"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings.php:35
+msgid "General Settings"
+msgstr ""
+
+#: admin/class-thmaf-admin-settings.php:36
+msgid "Premium Features"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:145
+msgid "WooCommerce Multiple Addresses"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:145
+msgid "Manage Address"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:173
+#: includes/class-thmaf.php:190
+msgid "Premium plugin"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:174
+#: includes/class-thmaf.php:191
+msgid "Settings"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:200
+msgid "WooCommerce Multiple addresses"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:202
+msgid "premium version provides more features to manage the users addresses"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:205
+msgid "Let Your Shoppers Choose from a List of Saved Addresses"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:208
+msgid "Manage All Addresses from My Account Page"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:212
+msgid "Save Time with Google Autocomplete Feature"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:215
+msgid "Custom Address Formats through Overriding"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:218
+msgid "Display Your Multiple Address Layouts in Style"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:221
+msgid "Highly Compatible with"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:223
+msgid "WooCommerce Checkout Field Editor"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:390
+msgid "Tell us what you loved"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:391
+msgid "We are waiting to know your experience using the plugin Multiple Shipping Address for Woocommerce. Tell us what you loved about the latest improvements. Also, drop in your suggestions, review and help us grow better."
+msgstr ""
+
+#: admin/class-thmaf-admin.php:394
+msgid "Ok, You deserve it"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:398
+msgid "Already, Did"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:402
+msgid "Maybe later"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:406
+msgid "Nah, Never"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:467
+msgid "Quick Feedback"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:471
+msgid "If you have a moment, please let us know why you want to deactivate this plugin"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:491
+msgid "This form is only for getting your valuable feedback. We do not collect your personal data. To know more read our "
+msgstr ""
+
+#: admin/class-thmaf-admin.php:492
+msgid "Privacy Policy"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:499
+msgid "Skip & Deactivate"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:502
+msgid "Get Support"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:503
+msgid "Submit and Deactivate"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:504
+msgid "Cancel"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:679
+msgid "Upgraded"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:747
+msgid "Upgraded to premium."
+msgstr ""
+
+#: admin/class-thmaf-admin.php:754
+msgid "A specific feature is missing"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:756
+msgid "Type in the feature"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:761
+msgid "Found an error in the plugin/ Plugin was not working"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:763
+msgid "Specify the issue"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:768
+msgid "I found a better Plugin"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:770
+#: admin/class-thmaf-admin.php:784
+msgid "Could you please mention the plugin?"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:775
+msgid "It was hard to use"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:777
+msgid "How can we improve your experience?"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:782
+msgid "It’s a temporary deactivation - I’m troubleshooting an issue"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:789
+msgid "Not mentioned here"
+msgstr ""
+
+#: admin/class-thmaf-admin.php:791
+msgid "Kindly tell us your reason, so that we can improve"
+msgstr ""
+
+#: includes/utils/class-thmaf-utils.php:127
+msgid "Home"
+msgstr ""
+
+#: public/class-thmaf-public.php:109
+msgid "Billing Addresses"
+msgstr ""
+
+#: public/class-thmaf-public.php:110
+msgid "Shipping Addresses"
+msgstr ""
+
+#: public/class-thmaf-public.php:111
+msgid "Addresses"
+msgstr ""
+
+#: public/class-thmaf-public.php:326
+msgid "Additional billing addresses"
+msgstr ""
+
+#: public/class-thmaf-public.php:327
+msgid "Additional shipping addresses"
+msgstr ""
+
+#: public/class-thmaf-public.php:341
+#: public/class-thmaf-public.php:357
+msgid "There are no saved addresses yet "
+msgstr ""
+
+#: public/class-thmaf-public.php:402
+msgid "Are you sure you want to delete this address?"
+msgstr ""
+
+#: public/class-thmaf-public.php:414
+msgid "Delete"
+msgstr ""
+
+#: public/class-thmaf-public.php:421
+#: public/class-thmaf-public.php:429
+msgid "Set as default"
+msgstr ""
+
+#: public/class-thmaf-public.php:558
+#: public/class-thmaf-public.php:562
+msgid "Address"
+msgstr ""
+
+#: public/class-thmaf-public.php:642
+#: public/class-thmaf-public.php:678
+#: public/class-thmaf-public.php:698
+msgid "Sorry, your nonce did not verify."
+msgstr ""
+
+#: public/class-thmaf-public.php:750
+#: public/class-thmaf-public.php:762
+#: public/class-thmaf-public.php:771
+msgid "hidden value"
+msgstr ""
+
+#: public/class-thmaf-public.php:932
+#: public/class-thmaf-public.php:938
+msgid "Billing with a different address"
+msgstr ""
+
+#: public/class-thmaf-public.php:966
+#: public/class-thmaf-public.php:972
+msgid "Shipping with a different address"
+msgstr ""
+
+#: public/class-thmaf-public.php:1239
+#: public/class-thmaf-public.php:1277
+#: public/class-thmaf-public.php:1281
+msgid "Billing Address"
+msgstr ""
+
+#: public/class-thmaf-public.php:1273
+#: public/class-thmaf-public.php:1368
+msgid "Add New Address"
+msgstr ""
+
+#: public/class-thmaf-public.php:1290
+#: public/class-thmaf-public.php:1385
+msgid "Choose an Address.."
+msgstr ""
+
+#: public/class-thmaf-public.php:1334
+#: public/class-thmaf-public.php:1372
+#: public/class-thmaf-public.php:1376
+#: public/class-thmaf-public.php:2173
+msgid "Shipping Address"
+msgstr ""
+
+#: public/class-thmaf-public.php:1734
+msgid "Do you want to ship to multiple addresses?"
+msgstr ""
+
+#: public/class-thmaf-public.php:1749
+msgid "Add new address"
+msgstr ""
+
+#: public/class-thmaf-public.php:1769
+msgid "Product"
+msgstr ""
+
+#: public/class-thmaf-public.php:1770
+msgid "Quantity"
+msgstr ""
+
+#: public/class-thmaf-public.php:1771
+msgid "Sent to:"
+msgstr ""
+
+#: public/class-thmaf-public.php:2254
+msgid "Choose an option"
+msgstr ""
+
+#: public/class-thmaf-public.php:2274
+msgid "Select Address"
+msgstr ""
+
+#: public/class-thmaf-public.php:2338
+msgid "The maximum allowed shipping locations within an order is 3. Please choose any three addresses out of the saved addresses for all products."
+msgstr ""
+
+#: public/class-thmaf-public.php:2571
+msgid "Multiple shipping is enabled."
+msgstr ""
+
+#: public/templates/myaccount/my-address.php:27
+#: public/templates/myaccount/my-address.php:32
+msgid "Billing address"
+msgstr ""
+
+#: public/templates/myaccount/my-address.php:28
+msgid "Shipping address"
+msgstr ""
+
+#: public/templates/myaccount/my-address.php:40
+msgid "The following addresses will be used on the checkout page by default."
+msgstr ""
+
+#: public/templates/myaccount/my-address.php:52
+msgid "Edit"
+msgstr ""
+
+#: public/templates/myaccount/my-address.php:56
+msgid "You have not set up this type of address yet."
+msgstr ""

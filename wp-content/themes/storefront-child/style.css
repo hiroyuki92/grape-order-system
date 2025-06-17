@@ -1,0 +1,65 @@
+/*
+Theme Name: Storefront Child
+Template: storefront
+Description: Sano Farm用カスタムテーマ
+Version: 1.0
+*/
+
+/* 親テーマのスタイルを読み込み */
+@import url("../storefront/style.css");
+
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hannari&display=swap');
+
+/* カスタムスタイル */
+
+.main-navigation a {
+    font-family: 'Playfair Display', serif ;
+    font-weight: 400 ;
+}
+
+.site-title {
+    display: block;
+    font-family: 'Dancing Script', cursive;
+    font-weight: 700;
+    font-size: 2.5em;
+}
+
+.site-branding {
+    display: block;
+}
+
+.site-header {
+    background-color: #fff; 
+    padding: 20px 0;
+    margin-bottom: 0 !important;
+    border-bottom: 1px solid #f8f5ea;
+}
+
+/* ヒーローバナーのスタイル */
+.top-hero-banner {
+    width: 100%;
+    margin: 0 0 40px 0;
+    padding: 0;
+}
+
+.hero-banner-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.page .entry-title {
+    font-family: 'Hannari', serif !important;
+    font-size: 32px;
+    font-weight: normal;
+    color: #2F4F2F;
+    margin-bottom: 30px;
+}
+
+.page .entry-content {
+    font-family: 'Hannari', serif;
+    font-size: 18px;
+    line-height: 1.8;
+    color: #333333;
+}

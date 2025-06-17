@@ -1,0 +1,437 @@
+# Translation of Plugins - Order Delivery Date for WooCommerce - Development (trunk) in Japanese
+# This file is distributed under the same license as the Plugins - Order Delivery Date for WooCommerce - Development (trunk) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2018-12-24 05:57:23+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/4.0.1\n"
+"Language: ja_JP\n"
+"Project-Id-Version: Plugins - Order Delivery Date for WooCommerce - Development (trunk)\n"
+
+#: welcome.php:286
+msgid "Follow %s"
+msgstr "%s　にフォロー"
+
+#: welcome.php:239
+msgid "Current Offers"
+msgstr "現在のオファー"
+
+#: welcome.php:231
+msgid "Meet the team"
+msgstr "チームについて"
+
+#: welcome.php:222
+msgid "View all Premium Plugins"
+msgstr "プレミアムプラグインをすべて表示"
+
+#: welcome.php:221
+msgid "Visit the Tyche Softwares Website"
+msgstr "Tyche Softwares のサイト "
+
+#: welcome.php:218
+msgid "Getting to Know Tyche Softwares"
+msgstr "Tyche Softwares について "
+
+#: welcome.php:209
+msgid "View full list of differences between Lite & Pro plugin"
+msgstr "Lite と Pro プラグインの違いの全リストを見る"
+
+#: welcome.php:195
+msgid "The Pro version of the plugin allows you to add different delivery settings like Same day cut-off time, Next Day cut-off time or Minimum Delivery Time for each weekday. It also allows you to add different delivery charges for different weekdays."
+msgstr "Pro バージョンは、同じ日の締め切り時間、翌日の締め切り時間、または平日の最小配達時間など、さまざまな配達設定を追加できます。また、平日ごとに異なる配送料を追加することもできます。"
+
+#: welcome.php:193
+msgid "Different delivery settings for each weekday"
+msgstr "平日ごとに異なる配信設定"
+
+#: welcome.php:181
+msgid "The ability to synchronise deliveries to the google calendar helps administrator or store manager to manage all the things in a single calendar."
+msgstr "配達を Google カレンダーに同期させる能力は、管理者または店長が単一のカレンダー内のすべてのものを管理するのを助ける。"
+
+#: welcome.php:179
+msgid "Synchronise Deliveries with Google Calendar"
+msgstr "Google カレンダーと配信を同期する"
+
+#: welcome.php:168 welcome.php:175 welcome.php:204
+msgid "Order Delivery Date for WooCommerce Lite"
+msgstr "Order Delivery Date for WooCommerce Lite"
+
+#: welcome.php:160
+msgid "The provision for allowing Delivery Time along with the Delivery Date on the checkout page makes the delivery more accurate. Delivering products on customer's preferred date and time improves your customers service."
+msgstr "チェックアウトページの配達日と共に配達時間を許可するための規定は配達をより正確にします。顧客が希望する日時に商品を配達すると、顧客サービスが向上します。"
+
+#: welcome.php:158
+msgid "Delivery Time along with Delivery Date"
+msgstr "配達日と配達時間"
+
+#: welcome.php:149 welcome.php:162 welcome.php:184 welcome.php:198
+msgid "Learn More"
+msgstr "さらに詳しく"
+
+#: welcome.php:146
+msgid "The ability to set different delivery schedule for different WooCommerce shipping zones, shipping classes and product categories is very useful for the businesses like food packet deliveries, cake shops etc which deals with delivery in different shipping zones."
+msgstr "異なる WooCommerce 発送ゾーン、発送クラス、商品カテゴリーに異なる配送スケジュールを設定する機能は、異なる発送ゾーンでの配達を扱うフードパケット配達、ケーキショップなどの企業にとって非常に便利です。"
+
+#: welcome.php:144
+msgid "Create Custom Delivery Schedules"
+msgstr "カスタム配信スケジュールを作成する"
+
+#: welcome.php:135
+msgid "The Order Delivery Date Pro plugin gives you features where you can allow customers to choose a Delivery Time along with Date as compared to Lite Plugin. Here are some other notable features the Pro version provides."
+msgstr "Order Delivery Date Pro プラグインを使用すると、Lite プラグインと比較して、顧客が日付と合わせて期日を選択できるようになります。これは Pro 版が提供する他の注目すべき機能です。"
+
+#: welcome.php:133
+msgid "Know more about Order Delivery Date Pro"
+msgstr "Order Delivery Date Pro について "
+
+#: welcome.php:123
+msgid "Click Here to go to Order Delivery Date Settings page"
+msgstr "注文配達日の設定ページはここをクリック"
+
+#: welcome.php:121
+msgid "To start allowing customers to select their preferred delivery date, simply activate the Enable Delivery Date checkbox from under Order Delivery Date menu."
+msgstr "顧客に希望する配達日の選択を許可するには、「配達日の注文」メニューの「配達日を有効にする」チェックボックスをオンにします。"
+
+#: welcome.php:119
+msgid "Enable Delivery Date Capture"
+msgstr "配達日のキャプチャーを有効化 "
+
+#: welcome.php:115 welcome.php:140
+msgid "Order Delivery Date Lite"
+msgstr "Order Delivery Date Lite"
+
+#: welcome.php:111
+msgid "Get Started with Order Delivery Date Lite"
+msgstr "Order Delivery Date Lite を使い始める"
+
+#: welcome.php:101
+msgid "Thank you for activating or updating to the latest version of Order Delivery Date Lite! If you're a first time user, welcome! You're well to accept deliveries with customer preferred delivery date. "
+msgstr "Order Delivery Date Lite アクティベーションまたは最新バージョンへのアップデートをありがとうございます ! 初めてのユーザーなら、ようこそ ! 顧客が希望する配達日を指定して配達を受け入れることができます。"
+
+#: welcome.php:57
+msgid "Welcome to Order Delivery Date Lite"
+msgstr "Order Delivery Date Lite にようこそ"
+
+#: welcome.php:56
+msgid "Welcome to Order Delivery Date Lite %s"
+msgstr "Order Delivery Date Lite %s にようこそ "
+
+#: order_delivery_date.php:375
+msgid "Booked"
+msgstr "予約済み"
+
+#: order_delivery_date.php:374
+msgid "Holiday"
+msgstr "休日"
+
+#: orddd-lite-settings.php:340
+msgid "Date:"
+msgstr "日付"
+
+#: orddd-lite-settings.php:331
+msgid "Name:"
+msgstr "名"
+
+#: orddd-lite-settings.php:324
+msgid "Add Holiday"
+msgstr "休日を追加"
+
+#: orddd-lite-process.php:284
+msgid "is a required field."
+msgstr "必須フィールド"
+
+#: orddd-lite-settings.php:233
+msgid "Add the Delivery Date field on the cart page along with the Checkout page."
+msgstr "チェックアウトページと一緒にカートページに「納品日」フィールドを追加します。"
+
+#: orddd-lite-settings.php:229
+msgid "Delivery Date field on Cart page:"
+msgstr "カートページの「納品日」フィールド"
+
+#. Author URI of the plugin/theme
+msgid "http://www.tychesoftwares.com/about"
+msgstr "http://www.tychesoftwares.com/about"
+
+#. Author of the plugin/theme
+msgid "Tyche Softwares"
+msgstr "Tyche Softwares"
+
+#. Description of the plugin/theme
+msgid "This plugin allows customers to choose their preferred Order Delivery Date during checkout."
+msgstr "このプラグインを使用すると、顧客はチェックアウト時に希望の注文配信日を選択できます。"
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.tychesoftwares.com/store/free-plugin/order-delivery-date-on-checkout/"
+msgstr "http://www.tychesoftwares.com/store/free-plugin/order-delivery-date-on-checkout/"
+
+#. Plugin Name of the plugin/theme
+msgid "Order Delivery Date for WooCommerce (Lite version)"
+msgstr "Order Delivery Date for WooCommerce (Lite バーション) "
+
+#: order_delivery_date.php:373
+msgid "Clear"
+msgstr "クリア"
+
+#: order_delivery_date.php:192
+msgid "Order Delivery Date for WooCommerce (Lite version) plugin requires WooCommerce installed and activate."
+msgstr "「Order Delivery Date for WooCommerce（Liteバージョン）」プラグインはWooCommerce をインストールして起動する必要があります。"
+
+#: orddd-lite-settings.php:787
+msgid "Featured Products"
+msgstr "おすすめ商品"
+
+#: orddd-lite-settings.php:779
+msgid "Virtual Products"
+msgstr "バーチャル製品"
+
+#: orddd-lite-settings.php:765
+msgid "Preview theme:"
+msgstr "テーマをプレビュー"
+
+#: orddd-lite-settings.php:694
+msgid "After Order Notes"
+msgstr "注文後の注意事項"
+
+#: orddd-lite-settings.php:693
+msgid "Before Order Notes"
+msgstr "ご注文の前に"
+
+#: orddd-lite-settings.php:692
+msgid "In Shipping Section"
+msgstr "出荷セクション"
+
+#: orddd-lite-settings.php:691
+msgid "In Billing Section"
+msgstr "請求セクション"
+
+#: orddd-lite-settings.php:443
+msgid "Weekdays:"
+msgstr "平日"
+
+#: orddd-lite-settings.php:392 orddd-lite-settings.php:400
+#: orddd-lite-settings.php:408
+msgid "Save Settings"
+msgstr "設定を保存する"
+
+#: orddd-lite-settings.php:384 orddd-lite-settings.php:412
+msgid "Holidays"
+msgstr "祝日"
+
+#: orddd-lite-settings.php:383
+msgid "Appearance"
+msgstr "外観"
+
+#: orddd-lite-settings.php:382
+msgid "Date Settings"
+msgstr "日付設定"
+
+#: orddd-lite-settings.php:251
+msgid "<br>Disable the Delivery Date on the Checkout page for Virtual products and Featured products."
+msgstr "<br>仮想商品とおすすめ商品の「チェックアウト」ページで「配信日」を無効にします。"
+
+#: orddd-lite-settings.php:247
+msgid "Disable the Delivery Date Field for:"
+msgstr "配達日フィールドを無効化"
+
+#: orddd-lite-settings.php:242
+msgid "Select the theme for the calendar which blends with the design of your website."
+msgstr "サイトのデザインに溶け込むカレンダーのテーマを選択してください。"
+
+#: orddd-lite-settings.php:238
+msgid "Theme:"
+msgstr "テーマ"
+
+#: orddd-lite-settings.php:224
+msgid "</br>The Delivery Date field will be displayed in the selected section.</br><i>Note: WooCommerce automatically hides the Shipping section fields for Virtual products.</i>"
+msgstr "</br>配達日フィールドが選択したセクションに表示されます。</br><i>注: WooCommerce は自動的に仮想商品の配送セクションフィールドを非表示にします。</i>"
+
+#: orddd-lite-settings.php:220
+msgid "Field placement on the Checkout page:"
+msgstr "チェックアウトページのフィールド配置"
+
+#: orddd-lite-settings.php:215
+msgid "The number of months to be shown on the calendar."
+msgstr "カレンダーに表示される月数"
+
+#: orddd-lite-settings.php:211
+msgid "Number of Months:"
+msgstr "月数"
+
+#: orddd-lite-settings.php:206
+msgid "Choose the note to be displayed below the delivery date field on checkout page."
+msgstr "チェックアウトページの配達日フィールドの下に表示されるメモを選択します"
+
+#: orddd-lite-settings.php:202
+msgid "Field Note Text:"
+msgstr "フィールドの注テキスト"
+
+#: orddd-lite-settings.php:197
+msgid "Choose the placeholder text that is to be displayed for the field on checkout page."
+msgstr "チェックアウトページのフィールドに表示されるプレースホルダーテキストを選択します。"
+
+#: orddd-lite-settings.php:193
+msgid "Field Placeholder Text:"
+msgstr "フィールドプレースホルダーテキスト"
+
+#: orddd-lite-settings.php:188
+msgid "Choose the label that is to be displayed for the field on checkout page."
+msgstr "チェックアウトページのフィールドに表示されるラベルを選択します。"
+
+#: orddd-lite-settings.php:184
+msgid "Field Label:"
+msgstr "フィールドラベル"
+
+#: orddd-lite-settings.php:179
+msgid "Choose the first day of week displayed on the Delivery Date calendar."
+msgstr "配達日カレンダーに表示される週の最初の日を選択してください。"
+
+#: orddd-lite-settings.php:175
+msgid "First Day of Week:"
+msgstr "週の最初の日"
+
+#: orddd-lite-settings.php:170
+msgid "The format in which the Delivery Date appears to the customers on the checkout page once the date is selected."
+msgstr "日付が選択された後に顧客に配達日がチェックアウトページに表示される形式"
+
+#: orddd-lite-settings.php:166
+msgid "Date Format:"
+msgstr "日付フォーマット"
+
+#: orddd-lite-settings.php:161
+msgid "Choose a Language."
+msgstr "言語を選ぶ"
+
+#: orddd-lite-settings.php:157
+msgid "Calendar Language:"
+msgstr "カレンダーの言語"
+
+#: orddd-lite-settings.php:150
+msgid "Calendar Appearance"
+msgstr "カレンダーの外観"
+
+#: orddd-lite-settings.php:96
+msgid "If selected, then the Minimum Delivery Time (in hours) will be applied on the non working weekdays which are unchecked in Delivery Weekdays. If unchecked, then it will not be applied. For example, if Minimum Delivery Time (in hours) is set to 48 hours and Saturday is disabled for delivery. Now if a customer visits the website on Firday, then the first available date will be Monday and not Sunday."
+msgstr "選択された場合、「配達平日」でチェックされていない平日に「最小配達時間（時間単位）」が適用されます。チェックしないと、適用されません。たとえば、「最小配達時間（時間単位）」が48時間に設定されていて、土曜日が配達に対して無効になっている場合です。顧客が金曜日にサイトにアクセスした場合、最初の利用可能日は日曜日ではなく月曜日になります。"
+
+#: orddd-lite-settings.php:92
+msgid "Apply Minimum Delivery Time for non working weekdays:"
+msgstr "平日以外の最短納期を適用する"
+
+#: orddd-lite-settings.php:87
+msgid "Auto-populate first available Delivery date when the checkout page loads."
+msgstr "チェックアウトページがロードされたときに最初の利用可能な配達日を自動入力します。"
+
+#: orddd-lite-settings.php:83
+msgid "Auto-populate first available Delivery date:"
+msgstr "最初に利用可能な配達日を自動入力"
+
+#: orddd-lite-settings.php:78
+msgid "Enable default sorting of orders (in descending order) by Delivery Date on WooCommerce -> Orders page"
+msgstr "「WooCommerce \t 注文ページ」で、配信日による注文のデフォルトのソート（降順）を可能に"
+
+#: orddd-lite-settings.php:74
+msgid "Sort on WooCommerce Orders Page:"
+msgstr "WooCommerce注文ページで並べ替え"
+
+#: orddd-lite-settings.php:69
+msgid "Maximum deliveries/orders per day."
+msgstr "1日あたりの最大配達数／注文数"
+
+#: orddd-lite-settings.php:65
+msgid "Lockout date after X orders:"
+msgstr " X オーダー後のロックアウト日"
+
+#: orddd-lite-settings.php:60
+msgid "Selection of delivery date on the checkout page will become mandatory."
+msgstr "チェックアウトページでの配達日の選択は必須になります。"
+
+#: orddd-lite-settings.php:56
+msgid "Mandatory field?:"
+msgstr "必須フィールド ?"
+
+#: orddd-lite-settings.php:51
+msgid "Number of dates available for delivery."
+msgstr "配達可能な日数"
+
+#: orddd-lite-settings.php:47
+msgid "Number of dates to choose:"
+msgstr "選択する日数"
+
+#: orddd-lite-settings.php:42
+msgid "Minimum number of hours required to prepare for delivery."
+msgstr "配達の準備に必要な最小時間数"
+
+#: orddd-lite-settings.php:38
+msgid "Minimum Delivery time (in hours):"
+msgstr "最小配達時間（時間）"
+
+#: orddd-lite-settings.php:33
+msgid "Select weekdays for delivery."
+msgstr "配達する平日を選択してください。"
+
+#: orddd-lite-settings.php:29
+msgid "Delivery Days:"
+msgstr "配達する平日"
+
+#: orddd-lite-settings.php:24
+msgid "Enable Delivery Date capture on the checkout page."
+msgstr "チェックアウトページで配達日のキャプチャーを有効化"
+
+#: orddd-lite-settings.php:20
+msgid "Enable Delivery Date:"
+msgstr "配達日を有効化"
+
+#: orddd-lite-settings.php:13 orddd-lite-settings.php:377
+msgid "Order Delivery Date Settings"
+msgstr "注文配送日の設定"
+
+#: orddd-lite-config.php:126 uninstall.php:27
+msgid "Saturday"
+msgstr "土曜日"
+
+#: orddd-lite-config.php:125 uninstall.php:26
+msgid "Friday"
+msgstr "金曜日"
+
+#: orddd-lite-config.php:124 uninstall.php:25
+msgid "Thursday"
+msgstr "木曜日"
+
+#: orddd-lite-config.php:123 uninstall.php:24
+msgid "Wednesday"
+msgstr "水曜日"
+
+#: orddd-lite-config.php:122 uninstall.php:23
+msgid "Tuesday"
+msgstr "火曜日"
+
+#: orddd-lite-config.php:121 uninstall.php:22
+msgid "Monday"
+msgstr "月曜日 "
+
+#: orddd-lite-config.php:120 uninstall.php:21
+msgid "Sunday"
+msgstr "日曜日"
+
+#: class-view-holidays.php:83
+msgid "Date"
+msgstr "日付"
+
+#: class-view-holidays.php:82
+msgid "Name"
+msgstr "名"
+
+#: class-view-holidays.php:42
+msgid "Delete"
+msgstr "削除する"
+
+#: class-view-holidays.php:33
+msgid "holidays"
+msgstr "休日"
+
+#: class-view-holidays.php:32
+msgid "holiday"
+msgstr "休日"

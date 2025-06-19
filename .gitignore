@@ -4,3 +4,4 @@ wp-content/uploads/
 .DS_Store
 .htaccess
 wp-content/cache/
+*.po~

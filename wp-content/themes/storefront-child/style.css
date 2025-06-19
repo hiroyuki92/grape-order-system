@@ -5,19 +5,18 @@ Description: Sano Farm用カスタムテーマ
 Version: 1.0
 */
 
-/* 親テーマのスタイルを読み込み */
-@import url("../storefront/style.css");
 
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Hannari&display=swap');
+/* =============================================================================
+   サイト全体のスタイル
+   ============================================================================= */
 
-/* カスタムスタイル */
-
+/* ナビゲーションメニュー */
 .main-navigation a {
-    font-family: 'Playfair Display', serif ;
-    font-weight: 400 ;
+    font-family: 'Playfair Display', serif;
+    font-weight: 400;
 }
 
+/* サイトタイトル */
 .site-title {
     display: block;
     font-family: 'Dancing Script', cursive;
@@ -29,6 +28,7 @@ Version: 1.0
     display: block;
 }
 
+/* ヘッダー */
 .site-header {
     background-color: #fff; 
     padding: 20px 0;
@@ -36,7 +36,10 @@ Version: 1.0
     border-bottom: 1px solid #f8f5ea;
 }
 
-/* ヒーローバナーのスタイル */
+/* =============================================================================
+   ヒーローバナー
+   ============================================================================= */
+
 .top-hero-banner {
     width: 100%;
     margin: 0 0 40px 0;
@@ -48,6 +51,10 @@ Version: 1.0
     height: auto;
     display: block;
 }
+
+/* =============================================================================
+   ページコンテンツ
+   ============================================================================= */
 
 .page .entry-title {
     font-family: 'Hannari', serif !important;
@@ -62,4 +69,42 @@ Version: 1.0
     font-size: 18px;
     line-height: 1.8;
     color: #333333;
+}
+
+/* =============================================================================
+   WooCommerce カスタマイズ
+   ============================================================================= */
+
+/* カートページのスタイル調整 */
+.woocommerce-cart .cart-collaterals {
+    margin-top: 20px;
+}
+
+/* チェックアウトページのスタイル調整 */
+.woocommerce-checkout .checkout {
+    font-family: 'Hannari', serif;
+}
+
+/* 商品ページのスタイル調整 */
+.woocommerce div.product .summary .price {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+/* =============================================================================
+   レスポンシブ対応
+   ============================================================================= */
+
+@media (max-width: 768px) {
+    .site-title {
+        font-size: 2em;
+    }
+    
+    .page .entry-title {
+        font-size: 24px;
+    }
+    
+    .page .entry-content {
+        font-size: 16px;
+    }
 }

@@ -1,0 +1,173 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Address Book\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-17 03:15+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.8.0; wp-6.8.1; php-8.3.14\n"
+"X-Domain: woo-address-book"
+
+#: includes/settings.php:34 includes/settings.php:56
+msgid "\"Add New Address\" as default selection"
+msgstr ""
+
+#: includes/class-wc-address-book.php:725
+msgid "Add New Address"
+msgstr ""
+
+#: includes/class-wc-address-book.php:269
+msgid "Add New Billing Address"
+msgstr ""
+
+#: includes/class-wc-address-book.php:271
+msgid "Add New Shipping Address"
+msgstr ""
+
+#: includes/class-wc-address-book.php:350
+#: includes/class-wc-address-book.php:700
+msgid "Address Book"
+msgstr ""
+
+#: includes/class-wc-address-book.php:1117
+#: includes/class-wc-address-book.php:1169
+msgid "Address nickname"
+msgstr ""
+
+#: includes/class-wc-address-book.php:1232
+#: includes/class-wc-address-book.php:1270
+msgid ""
+"Address nickname should be unique, another address is using the nickname."
+msgstr ""
+
+#: includes/class-wc-address-book.php:197
+msgid "Are you sure you want to delete this address?"
+msgstr ""
+
+#: templates/myaccount/my-address-book.php:48
+msgid "Billing Address Book"
+msgstr ""
+
+#: includes/settings.php:26
+msgid "Billing address book"
+msgstr ""
+
+#: includes/class-wc-address-book.php:252
+msgid "Billing Address Book Full"
+msgstr ""
+
+#: includes/settings.php:70
+msgid "Billing address save limit"
+msgstr ""
+
+#: includes/settings.php:98
+msgid ""
+"Block readonly fields from being populated by changing address during "
+"checkout."
+msgstr ""
+
+#. Author of the plugin
+msgid "CrossPeak"
+msgstr ""
+
+#: templates/myaccount/my-address-book.php:90
+#: templates/myaccount/my-address-book.php:175
+msgid "Delete"
+msgstr ""
+
+#: templates/myaccount/my-address-book.php:89
+#: templates/myaccount/my-address-book.php:174
+msgid "Edit"
+msgstr ""
+
+#: includes/settings.php:27
+msgid "Enable billing address book"
+msgstr ""
+
+#: includes/settings.php:41
+msgid "Enable setting Billing Address Nickname during Checkout"
+msgstr ""
+
+#: includes/settings.php:63
+msgid "Enable setting Shipping Address Nickname during Checkout"
+msgstr ""
+
+#: includes/settings.php:49
+msgid "Enable shipping address book"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Gives your customers the option to store multiple shipping addresses and "
+"retrieve them on checkout.."
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.crosspeaksoftware.com/"
+msgstr ""
+
+#: templates/myaccount/my-address-book.php:91
+#: templates/myaccount/my-address-book.php:176
+msgid "Make Primary"
+msgstr ""
+
+#: includes/settings.php:21
+msgid "Setting options for WooCommerce Address Book."
+msgstr ""
+
+#: templates/myaccount/my-address-book.php:128
+msgid "Shipping Address Book"
+msgstr ""
+
+#: includes/settings.php:48
+msgid "Shipping address book"
+msgstr ""
+
+#: includes/class-wc-address-book.php:254
+msgid "Shipping Address Book Full"
+msgstr ""
+
+#: includes/settings.php:84
+msgid "Shipping address save limit"
+msgstr ""
+
+#: templates/myaccount/my-address-book.php:55
+#: templates/myaccount/my-address-book.php:136
+msgid "The following addresses are available during the checkout process."
+msgstr ""
+
+#: includes/settings.php:105
+msgid ""
+"Use radio inputs instead of a select element for billing/shipping address on "
+"checkout."
+msgstr ""
+
+#: includes/class-wc-address-book.php:1123
+msgid "Will help you identify your addresses easily."
+msgstr ""
+
+#: includes/class-wc-address-book.php:1175
+msgid ""
+"Will help you identify your addresses easily. Suggested nicknames: Home, "
+"Work..."
+msgstr ""
+
+#. Name of the plugin
+msgid "WooCommerce Address Book"
+msgstr ""
+
+#: includes/settings.php:19
+msgid "WooCommerce Address Book options"
+msgstr ""
+
+#: woocommerce-address-book.php:48
+msgid "WooCommerce Address Book requires WooCommerce and has been deactivated."
+msgstr ""

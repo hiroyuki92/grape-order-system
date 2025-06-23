@@ -1,0 +1,141 @@
+/**
+ * 電話番号会員管理システム - 管理画面用CSS
+ * assets/css/admin.css
+ */
+
+/* 会員一覧テーブル */
+.pms-member-list .wp-list-table th,
+.pms-member-list .wp-list-table td {
+    vertical-align: top;
+    padding: 12px 8px;
+}
+
+.pms-member-list .order-count {
+    font-weight: bold;
+    color: #0073aa;
+}
+
+.pms-member-list .button-small {
+    padding: 2px 8px;
+    font-size: 11px;
+    line-height: 1.5;
+    height: auto;
+}
+
+/* パスワード状況表示 */
+.pms-password-status-changed {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.pms-password-status-admin {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.pms-password-status-initial {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* 会員登録フォーム */
+.pms-registration-form {
+    max-width: 600px;
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.pms-registration-form .form-table th {
+    width: 150px;
+}
+
+.pms-registration-form .regular-text {
+    width: 300px;
+}
+
+/* ヒント・案内ボックス */
+.pms-hint-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f0f8ff;
+    border-left: 4px solid #007cba;
+}
+
+.pms-hint-box h3 {
+    margin-top: 0;
+}
+
+.pms-hint-box ul {
+    margin: 10px 0;
+}
+
+/* ユーザー編集ページ */
+.pms-phone-user-notice {
+    background: #fff3cd;
+    border: 1px solid #ffecb5;
+    color: #856404;
+    padding: 10px;
+    border-radius: 3px;
+    margin-top: 10px;
+}
+
+/* エラー・成功メッセージ */
+.pms-success-message {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+
+.pms-warning-message {
+    background: #fff3cd;
+    border: 1px solid #ffecb5;
+    color: #856404;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+
+.pms-error-message {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+
+/* 統計情報 */
+.pms-stats-box {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+}
+
+.pms-stats-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0073aa;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .pms-registration-form {
+        max-width: 100%;
+        margin: 0 10px;
+    }
+    
+    .pms-registration-form .regular-text {
+        width: 100%;
+    }
+    
+    .pms-member-list .wp-list-table {
+        font-size: 12px;
+    }
+}

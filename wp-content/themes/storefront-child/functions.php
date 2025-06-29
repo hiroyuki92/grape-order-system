@@ -61,6 +61,11 @@ if (file_exists($includes_dir . 'woocommerce-order-status.php')) {
     require_once $includes_dir . 'woocommerce-order-status.php';
 }
 
+// カート配送先住所非表示機能
+if (file_exists($includes_dir . 'woocommerce-cart-shipping.php')) {
+    require_once $includes_dir . 'woocommerce-cart-shipping.php';
+}
+
 // その他カスタマイズ
 if (file_exists($includes_dir . 'woocommerce-customization.php')) {
     require_once $includes_dir . 'woocommerce-customization.php';

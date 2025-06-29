@@ -167,23 +167,4 @@ function custom_order_status_column($column, $post_id) {
 }
 add_action('manage_shop_order_posts_custom_column', 'custom_order_status_column', 10, 2);
 
-// ===========================================
-// メール通知設定
-// ===========================================
-
-/**
- * カスタムステータス変更時のメール通知トリガー
- */
-function add_custom_status_to_email_triggers($email_actions) {
-    // ステータス変更時のメール送信トリガーを追加
-    $email_actions[] = 'woocommerce_order_status_pending_to_preparing';
-    $email_actions[] = 'woocommerce_order_status_processing_to_awaiting-shipment';
-    $email_actions[] = 'woocommerce_order_status_awaiting-shipment_to_partial-shipment';
-    $email_actions[] = 'woocommerce_order_status_partial-shipment_to_shipped';
-    $email_actions[] = 'woocommerce_order_status_processing_to_shipped';
-    
-    return $email_actions;
-}
-add_filter('woocommerce_email_actions', 'add_custom_status_to_email_triggers');
-
 ?>

@@ -56,6 +56,11 @@ if (file_exists($includes_dir . 'woocommerce-receipt.php')) {
     require_once $includes_dir . 'woocommerce-receipt.php';
 }
 
+// 注文ステータス機能
+if (file_exists($includes_dir . 'woocommerce-order-status.php')) {
+    require_once $includes_dir . 'woocommerce-order-status.php';
+}
+
 // その他カスタマイズ
 if (file_exists($includes_dir . 'woocommerce-customization.php')) {
     require_once $includes_dir . 'woocommerce-customization.php';

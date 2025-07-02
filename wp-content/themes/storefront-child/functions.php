@@ -66,6 +66,11 @@ if (file_exists($includes_dir . 'woocommerce-cart-shipping.php')) {
     require_once $includes_dir . 'woocommerce-cart-shipping.php';
 }
 
+// 注文確認モーダル機能
+if (file_exists($includes_dir . 'woocommerce-order-confirmation.php')) {
+    require_once $includes_dir . 'woocommerce-order-confirmation.php';
+}
+
 // その他カスタマイズ
 if (file_exists($includes_dir . 'woocommerce-customization.php')) {
     require_once $includes_dir . 'woocommerce-customization.php';

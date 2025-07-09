@@ -80,3 +80,8 @@ if (file_exists($includes_dir . 'woocommerce-customization.php')) {
 if (file_exists($includes_dir . 'woocommerce-csv-export.php')) {
     require_once $includes_dir . 'woocommerce-csv-export.php';
 }
+
+// ユーザー権限管理（基本機能のみ）
+if (file_exists($includes_dir . 'user-roles-basic.php')) {
+    require_once $includes_dir . 'user-roles-basic.php';
+}

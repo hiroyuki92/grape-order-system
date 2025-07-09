@@ -294,6 +294,7 @@ function get_csv_headers() {
         '配送希望時間',
         '領収書希望',
         '領収書宛名',
+        '担当者',
         '備考',
         '注文メモ'
     );
@@ -397,6 +398,19 @@ function get_order_csv_data($order) {
         $receipt_name = '';
     }
     
+    // 担当者情報
+    $assigned_manager = '';
+    $customer_id = $order->get_customer_id();
+    if ($customer_id) {
+        $assigned_manager_id = get_user_meta($customer_id, 'assigned_order_manager', true);
+        if ($assigned_manager_id) {
+            $manager = get_user_by('id', $assigned_manager_id);
+            if ($manager) {
+                $assigned_manager = $manager->display_name;
+            }
+        }
+    }
+    
     // 備考・メモ
     $customer_note = $order->get_customer_note();
     $order_notes = '';
@@ -435,6 +449,7 @@ function get_order_csv_data($order) {
         $delivery_time,
         $receipt_status,
         $receipt_name,
+        $assigned_manager,
         $customer_note,
         $order_notes
     );

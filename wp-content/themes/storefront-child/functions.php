@@ -75,3 +75,8 @@ if (file_exists($includes_dir . 'woocommerce-order-confirmation.php')) {
 if (file_exists($includes_dir . 'woocommerce-customization.php')) {
     require_once $includes_dir . 'woocommerce-customization.php';
 }
+
+// CSVエクスポート機能
+if (file_exists($includes_dir . 'woocommerce-csv-export.php')) {
+    require_once $includes_dir . 'woocommerce-csv-export.php';
+}

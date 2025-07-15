@@ -44,3 +44,17 @@ function hide_shipping_email_field_myaccount($fields) {
     unset($fields['shipping_email']);
     return $fields;
 }
+
+// 注文完了画面（thankyou）でメールアドレス表示を非表示
+add_action('wp_head', 'hide_thankyou_email_css');
+function hide_thankyou_email_css() {
+    if (is_wc_endpoint_url('order-received')) {
+        ?>
+        <style>
+        .woocommerce-order-overview__email {
+            display: none !important;
+        }
+        </style>
+        <?php
+    }
+}

@@ -36,7 +36,7 @@ function add_order_confirmation_modal() {
                         <h4>ご注文商品</h4>
                         <div id="modal-order-items"></div>
                         
-                        <h4>お送り主（ご請求先）</h4>
+                        <h4>お送り主</h4>
                         <div id="modal-billing-address"></div>
                         
                         <h4>お届け先</h4>
@@ -47,6 +47,9 @@ function add_order_confirmation_modal() {
                         
                         <h4>お支払い方法</h4>
                         <div id="modal-payment-method"></div>
+                        
+                        <h4>領収書</h4>
+                        <div id="modal-receipt-info"></div>
                         
                         <h4>ご注文金額</h4>
                         <div id="modal-order-total"></div>
@@ -239,6 +242,17 @@ function add_order_confirmation_modal() {
 
                 // フォームバリデーション
                 var form = $('form.checkout');
+                
+                // 領収書バリデーション
+                var receiptRequired = $('input[name="receipt_required"]').is(':checked');
+                var receiptName = $('input[name="receipt_name"]').val();
+                
+                if (receiptRequired && (!receiptName || receiptName.trim() === '')) {
+                    alert('領収書が必要な場合は宛名の入力が必要です。');
+                    $('input[name="receipt_name"]').focus();
+                    return false;
+                }
+                
                 if (!form[0].checkValidity()) {
                     return true; // バリデーションエラーがある場合は通常の処理
                 }
@@ -288,6 +302,10 @@ function add_order_confirmation_modal() {
                 // 支払い方法
                 var paymentMethod = $('input[name="payment_method"]:checked').next('label').text();
                 $('#modal-payment-method').html(paymentMethod);
+
+                // 領収書情報
+                var receiptInfo = getReceiptInfo();
+                $('#modal-receipt-info').html(receiptInfo);
 
                 // 合計金額
                 var orderTotal = $('.order-total .woocommerce-Price-amount').text();
@@ -454,6 +472,22 @@ function add_order_confirmation_modal() {
                 
                 // その他の場合はそのまま返す
                 return dateString;
+            }
+
+            // 領収書情報を取得する関数
+            function getReceiptInfo() {
+                var receiptRequired = $('input[name="receipt_required"]').is(':checked');
+                var receiptName = $('input[name="receipt_name"]').val();
+                
+                if (receiptRequired) {
+                    var receiptInfo = '<strong style="color: green;">✓ 領収書が必要</strong>';
+                    if (receiptName && receiptName.trim() !== '') {
+                        receiptInfo += '<br><strong>宛名:</strong> ' + receiptName;
+                    }
+                    return receiptInfo;
+                } else {
+                    return '<span style="color: #666; font-style: italic;">不要</span>';
+                }
             }
             function getAddressFromForm(type) {
                 var prefix = type + '_';

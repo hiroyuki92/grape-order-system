@@ -58,3 +58,31 @@ function hide_thankyou_email_css() {
         <?php
     }
 }
+
+// ショップページのタイトルスタイルを強制適用
+add_action('wp_head', 'force_shop_title_style');
+function force_shop_title_style() {
+    if (is_shop() || is_product_category() || is_product_tag()) {
+        ?>
+        <style>
+        .woocommerce-products-header h1,
+        .woocommerce-products-header__title,
+        .page-title {
+            font-family: 'Hannari', serif !important;
+            font-size: 32px !important;
+            font-weight: normal !important;
+            color: #2F4F2F !important;
+            margin-bottom: 30px !important;
+        }
+        
+        @media (max-width: 768px) {
+            .woocommerce-products-header h1,
+            .woocommerce-products-header__title,
+            .page-title {
+                font-size: 24px !important;
+            }
+        }
+        </style>
+        <?php
+    }
+}

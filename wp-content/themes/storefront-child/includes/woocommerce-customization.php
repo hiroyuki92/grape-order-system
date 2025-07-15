@@ -86,3 +86,13 @@ function force_shop_title_style() {
         <?php
     }
 }
+
+// 住所ニックネームフィールドを非表示
+add_filter('woocommerce_billing_fields', 'hide_address_nickname_fields', 20);
+add_filter('woocommerce_shipping_fields', 'hide_address_nickname_fields', 20);
+function hide_address_nickname_fields($fields) {
+    // 住所ニックネームフィールドを削除
+    unset($fields['billing_address_nickname']);
+    unset($fields['shipping_address_nickname']);
+    return $fields;
+}

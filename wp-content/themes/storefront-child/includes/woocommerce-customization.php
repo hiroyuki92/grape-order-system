@@ -96,3 +96,29 @@ function hide_address_nickname_fields($fields) {
     unset($fields['shipping_address_nickname']);
     return $fields;
 }
+
+// 商品画像のリンクを削除
+add_action('init', 'remove_product_image_links');
+function remove_product_image_links() {
+    // ショップページ（商品一覧）の商品画像リンクを削除
+    remove_action('woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10);
+    remove_action('woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5);
+    
+    // 関連商品の商品画像リンクも削除
+    remove_action('woocommerce_before_single_product_summary', 'woocommerce_template_loop_product_link_open', 10);
+    remove_action('woocommerce_after_single_product_summary', 'woocommerce_template_loop_product_link_close', 5);
+}
+
+// マイアカウントページの説明文を変更
+add_filter('gettext', 'change_my_account_description', 20, 3);
+function change_my_account_description($translated_text, $text, $domain) {
+    if ($domain == 'woocommerce') {
+        if (strpos($text, 'From your account dashboard you can view your') !== false) {
+            return 'マイページでは、これまでのご注文を確認したり、住所やパスワードを変更したりできます。';
+        }
+        if (strpos($translated_text, 'アカウントダッシュボードでは、') !== false) {
+            return 'マイページでは、これまでのご注文を確認したり、住所やパスワードを変更したりできます。';
+        }
+    }
+    return $translated_text;
+}

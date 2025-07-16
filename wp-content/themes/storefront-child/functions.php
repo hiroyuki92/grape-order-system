@@ -23,7 +23,7 @@ add_action( 'wp_enqueue_scripts', 'storefront_child_enqueue_styles' );
 function add_hero_banner_after_header() {
     if (is_front_page()) {
         echo '<div class="top-hero-banner">';
-        echo '<img src="' . get_stylesheet_directory_uri() . '/images/hero-banner.png" alt="Sano Farm - Shine Muscat" class="hero-banner-image">';
+        echo '<img src="' . get_stylesheet_directory_uri() . '/images/wide-top-banner.png" alt="Sano Farm - Shine Muscat" class="hero-banner-image">';
         echo '</div>';
     }
 }

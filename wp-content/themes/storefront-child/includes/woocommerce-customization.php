@@ -122,3 +122,10 @@ function change_my_account_description($translated_text, $text, $domain) {
     }
     return $translated_text;
 }
+
+// マイアカウントページのダウンロードタブを非表示
+add_filter('woocommerce_account_menu_items', 'hide_downloads_tab');
+function hide_downloads_tab($items) {
+    unset($items['downloads']);
+    return $items;
+}

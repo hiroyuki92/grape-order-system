@@ -18,6 +18,12 @@ function pms_change_login_form_labels($translated_text, $text, $domain) {
             return '電話番号';
         case 'Password':
             return 'パスワード（4桁の数字）';
+        case 'Username is required.':
+        case 'ユーザー名は必須です。':
+            return '電話番号は必須です。';
+        case '<strong>Error:</strong> The username field is empty.':
+        case '<strong>エラー:</strong> ユーザー名フィールドが空です。':
+            return '<strong>エラー:</strong> 電話番号を入力してください。';
     }
     return $translated_text;
 }

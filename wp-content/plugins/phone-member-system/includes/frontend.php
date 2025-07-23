@@ -9,9 +9,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// ログインフォームのラベル変更
+// ログインフォームのラベル変更（顧客ページのみ）
 add_filter('gettext', 'pms_change_login_form_labels', 20, 3);
 function pms_change_login_form_labels($translated_text, $text, $domain) {
+    // 管理画面では変更しない
+    if (is_admin()) {
+        return $translated_text;
+    }
+    
     switch ($translated_text) {
         case 'Username or Email Address':
         case 'Username':
@@ -31,10 +36,10 @@ function pms_change_login_form_labels($translated_text, $text, $domain) {
     return $translated_text;
 }
 
-// ログインフォームのカスタマイズ
+// ログインフォームのカスタマイズ（顧客ページのみ）
 add_action('wp_footer', 'pms_customize_woocommerce_login');
 function pms_customize_woocommerce_login() {
-    if (is_account_page()) {
+    if (is_account_page() && !is_admin()) {
         ?>
         <script>
         jQuery(document).ready(function($) {
@@ -45,21 +50,67 @@ function pms_customize_woocommerce_login() {
             // ラベル変更
             $('label[for="username"]').html('電話番号 <span class="required">*</span>');
             $('label[for="password"]').html('パスワード <span class="required">*</span>');
+            
+            // 電話番号バリデーション
+            $('#username').on('input', function() {
+                var phone = $(this).val();
+                var phoneClean = phone.replace(/[^0-9]/g, '');
+                var isValid = phoneClean.length >= 10 && phoneClean.length <= 11;
+                
+                // エラー表示用の要素を作成または取得
+                var errorElement = $('#phone-validation-error');
+                if (errorElement.length === 0) {
+                    $(this).after('<div id="phone-validation-error" style="color: #dc3545; font-size: 14px; margin-top: 5px;"></div>');
+                    errorElement = $('#phone-validation-error');
+                }
+                
+                if (phone.length > 0 && !isValid) {
+                    errorElement.text('正しい電話番号を入力してください（10-11桁の数字）');
+                    $(this).css('border-color', '#dc3545');
+                } else {
+                    errorElement.text('');
+                    $(this).css('border-color', '');
+                }
+            });
+            
+            // フォーム送信時のバリデーション
+            $('.woocommerce-form-login').on('submit', function(e) {
+                var phone = $('#username').val();
+                var phoneClean = phone.replace(/[^0-9]/g, '');
+                
+                if (phone.length > 0 && (phoneClean.length < 10 || phoneClean.length > 11)) {
+                    e.preventDefault();
+                    $('#phone-validation-error').text('正しい電話番号を入力してください（10-11桁の数字）');
+                    $('#username').focus().css('border-color', '#dc3545');
+                    return false;
+                }
+            });
         });
         </script>
         <?php
     }
 }
 
-// ログインボタンの下に案内を表示
+// ログインボタンの下に案内を表示（顧客ページのみ）
 add_action('woocommerce_login_form_end', 'pms_add_login_notice_after_button');
 function pms_add_login_notice_after_button() {
-    ?>
-    <div style="background: #fff3cd; border: 1px solid #ffecb5; color: #856404; padding: 15px; margin: 20px 0; border-radius: 5px;">
-        <h3 style="margin-top: 0;">📞 パスワードをお忘れの場合</h3>
-        <p>パスワードを忘れた場合は担当者へお問い合わせください。</p>
-    </div>
-    <?php
+    if (!is_admin()) {
+        ?>
+        <!-- <div style="background: #e7f3ff; border: 1px solid #b3d9ff; color: #0056b3; padding: 15px; margin: 20px 0; border-radius: 5px;">
+            <h3 style="margin-top: 0;">👥 お客様ログイン画面</h3>
+            <p><strong>電話番号とパスワードでログイン</strong>してください。</p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>電話番号：ハイフンなしで入力（例：09012345678）</li>
+                <li>パスワード：登録時にお渡しした数字</li>
+            </ul>
+        </div> -->
+        
+        <div style="background: #fff3cd; border: 1px solid #ffecb5; color: #856404; padding: 15px; margin: 20px 0; border-radius: 5px;">
+            <h3 style="margin-top: 0;">📞 パスワードをお忘れの場合</h3>
+            <p>パスワードを忘れた場合は担当者へお問い合わせください。</p>
+        </div>
+        <?php
+    }
 }
 
 // パスワードを忘れた場合のリンクをCSSで隠す（重要な機能なので残す）
@@ -159,6 +210,24 @@ function pms_allow_password_change_for_phone_users() {
         <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; margin: 20px 0; border-radius: 5px;">
             <h3 style="margin-top: 0;">✅ パスワード変更済み</h3>
             <p style="margin: 0;">セキュリティが向上しました。必要に応じてパスワードを再変更できます。</p>
+        </div>
+        <?php
+    }
+}
+
+// 管理画面ログインページに案内を追加
+add_action('login_form', 'pms_add_admin_login_notice');
+function pms_add_admin_login_notice() {
+    if (strpos($_SERVER['REQUEST_URI'], 'wp-login.php') !== false) {
+        ?>
+        <div style="background: #fff2cc; border: 1px solid #d1ecf1; color: #0c5460; padding: 15px; margin: 10px 0; border-radius: 5px; font-size: 14px;">
+            <h3 style="margin-top: 0; font-size: 16px;">🔐 管理者ログイン画面</h3>
+            <p><strong>サイト管理者の方はこちらからログインしてください。</strong></p>
+            <p style="margin: 0;">ユーザー名またはメールアドレスとパスワードを入力してください。</p>
+        </div>
+        
+        <div style="background: #e7f3ff; border: 1px solid #b3d9ff; color: #0056b3; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 13px;">
+            <p style="margin: 0;"><strong>お客様の方へ：</strong> <a href="<?php echo wc_get_page_permalink('myaccount'); ?>" style="color: #0056b3;">こちらから</a>電話番号でログインできます。</p>
         </div>
         <?php
     }

@@ -24,6 +24,9 @@ function pms_change_login_form_labels($translated_text, $text, $domain) {
         case '<strong>Error:</strong> The username field is empty.':
         case '<strong>エラー:</strong> ユーザー名フィールドが空です。':
             return '<strong>エラー:</strong> 電話番号を入力してください。';
+        case 'Dashboard':
+        case 'ダッシュボード':
+            return 'ホーム';
     }
     return $translated_text;
 }

@@ -92,6 +92,54 @@ a[href*="@"]:not(.button):not(.btn) {
     display: none !important;
 }
 
+/* 送り先住所（請求先）とお届け先住所の背景色 */
+.woocommerce-column--billing-address {
+    background-color: #f8f8f8 ;
+    border-radius: 4px ;
+    padding: 20px ;
+    margin-bottom: 20px ;
+}
+
+.woocommerce-column--shipping-address {
+    background-color: #f8f8f8 ;
+    border-radius: 4px ;
+    padding: 20px ;
+    margin-bottom: 20px ;
+}
+
+.woocommerce-column--billing-address .woocommerce-column__title {
+    color: #000000 ;
+    border-bottom: 1px solid #949195 ;
+    padding-bottom: 10px ;
+    margin-bottom: 15px ;
+}
+
+.woocommerce-column--shipping-address .woocommerce-column__title {
+    color: #000000 ;
+    border-bottom: 1px solid #949195 ;
+    padding-bottom: 10px ;
+    margin-bottom: 15px ;
+}
+
+/* 住所内の項目間に余白を追加 */
+.woocommerce-column--billing-address address,
+.woocommerce-column--shipping-address address {
+    line-height: 1.8 ;
+}
+
+.woocommerce-column--billing-address address br,
+.woocommerce-column--shipping-address address br {
+    display: block ;
+    margin-bottom: 8px ;
+    content: "" ;
+}
+
+/* 電話番号の上に余白を追加 */
+.woocommerce-customer-details--phone {
+    margin-top: 5px ;
+    padding-top: 5px ;
+}
+
 /* カートページのスタイル調整 */
 .woocommerce-cart .cart-collaterals {
     margin-top: 20px;

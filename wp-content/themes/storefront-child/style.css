@@ -75,6 +75,23 @@ Version: 1.0
    WooCommerce カスタマイズ
    ============================================================================= */
 
+/* アカウント詳細の表示名フィールドを非表示 */
+p.woocommerce-form-row.woocommerce-form-row--wide.form-row.form-row-wide:has(#account_display_name),
+#account_display_name,
+label[for="account_display_name"],
+#account_display_name_description {
+    display: none !important;
+}
+
+/* 注文詳細画面の請求先住所からメールアドレスを非表示 */
+p.woocommerce-customer-details--email,
+.woocommerce-customer-details--email,
+body.woocommerce-account .woocommerce-customer-details address a[href*="mailto:"],
+body .woocommerce-order-details address a[href*="mailto:"],
+a[href*="@"]:not(.button):not(.btn) {
+    display: none !important;
+}
+
 /* カートページのスタイル調整 */
 .woocommerce-cart .cart-collaterals {
     margin-top: 20px;
@@ -108,6 +125,15 @@ body tr.order {
     background-color: #f8f8f8 !important;
     border-radius: 8px !important;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+}
+
+/* 注文詳細の商品行の背景色を統一 */
+tr.woocommerce-table__line-item.order_item,
+.woocommerce-table__product-name.product-name,
+.woocommerce-account .woocommerce-table__product-name,
+td.woocommerce-table__product-name.product-name,
+td.woocommerce-table__product-total.product-total {
+    background-color: #f8f8f8 !important;
 }
 
 body.woocommerce-account tr.woocommerce-orders-table__row.order:hover,

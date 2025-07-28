@@ -85,3 +85,47 @@ if (file_exists($includes_dir . 'woocommerce-csv-export.php')) {
 if (file_exists($includes_dir . 'user-roles-basic.php')) {
     require_once $includes_dir . 'user-roles-basic.php';
 }
+
+// ===========================================
+// 注文詳細の商品名リンクを削除
+// ===========================================
+
+// マイアカウントの注文詳細で商品名のリンクを削除
+function remove_product_link_in_order_details($product_name, $item, $is_visible) {
+    if (is_account_page() && is_wc_endpoint_url('view-order')) {
+        // 商品名からaタグを削除してテキストのみ表示
+        return strip_tags($product_name);
+    }
+    return $product_name;
+}
+add_filter('woocommerce_order_item_name', 'remove_product_link_in_order_details', 10, 3);
+
+// ===========================================
+// JavaScriptでメールアドレスリンクを削除
+// ===========================================
+
+function add_email_removal_script() {
+    if (is_account_page() && is_wc_endpoint_url('view-order')) {
+        ?>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // メールアドレス専用のp要素を削除
+            var emailElements = document.querySelectorAll('p.woocommerce-customer-details--email, .woocommerce-customer-details--email');
+            emailElements.forEach(function(element) {
+                element.style.display = 'none';
+                element.remove();
+            });
+            
+            // メールアドレスリンクを削除
+            var emailLinks = document.querySelectorAll('a[href*="mailto:"]');
+            emailLinks.forEach(function(link) {
+                link.style.display = 'none';
+                link.remove();
+            });
+        });
+        </script>
+        <?php
+    }
+}
+add_action('wp_footer', 'add_email_removal_script');
+

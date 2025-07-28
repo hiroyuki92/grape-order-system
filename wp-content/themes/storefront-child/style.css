@@ -207,18 +207,8 @@ body tr.order td {
         border: 2px solid #333333 !important;
         border-radius: 8px !important;
         background-color: #f8f8f8 !important;
-        margin-bottom: 10px !important;
         display: block !important;
         padding: 15px !important;
-    }
-}
-
-/* デスクトップ用の追加スタイル */
-@media (min-width: 769px) {
-    .woocommerce-orders-table tr {
-        outline: 3px solid #333333 !important;
-        outline-offset: -3px !important;
-        border-radius: 8px !important;
     }
 }
 

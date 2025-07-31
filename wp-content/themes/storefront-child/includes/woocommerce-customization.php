@@ -129,3 +129,17 @@ function hide_downloads_tab($items) {
     unset($items['downloads']);
     return $items;
 }
+
+// 請求先（お送り主）の電話番号を必須にする
+add_filter('woocommerce_billing_fields', 'make_billing_phone_required');
+function make_billing_phone_required($fields) {
+    $fields['billing_phone']['required'] = true;
+    return $fields;
+}
+
+// チェックアウトページでも電話番号を必須にする
+add_filter('woocommerce_checkout_fields', 'make_checkout_phone_required');
+function make_checkout_phone_required($fields) {
+    $fields['billing']['billing_phone']['required'] = true;
+    return $fields;
+}

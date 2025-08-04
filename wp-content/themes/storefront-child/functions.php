@@ -86,10 +86,6 @@ if (file_exists($includes_dir . 'user-roles-basic.php')) {
     require_once $includes_dir . 'user-roles-basic.php';
 }
 
-// 自宅配送機能
-if (file_exists($includes_dir . 'woocommerce-home-delivery.php')) {
-    require_once $includes_dir . 'woocommerce-home-delivery.php';
-}
 
 // ===========================================
 // 注文詳細の商品名リンクを削除

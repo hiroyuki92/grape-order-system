@@ -342,12 +342,6 @@ function add_order_confirmation_modal() {
             function getCustomValidationErrors() {
                 var errors = [];
                 
-                // 自宅配送のログインチェック
-                var isHomeDelivery = $('#home_delivery_checkbox').is(':checked');
-                if (isHomeDelivery && !$('body').hasClass('logged-in')) {
-                    errors.push('自宅配送をご利用いただくには、ログインが必要です。');
-                }
-                
                 // 領収書バリデーション
                 var receiptRequired = $('input[name="receipt_required"]').is(':checked');
                 var receiptName = $('input[name="receipt_name"]').val();
@@ -361,7 +355,6 @@ function add_order_confirmation_modal() {
 
             // 確認モーダルを表示する関数
             function showConfirmationModal() {
-                // 注文内容を取得してモーダルに表示
                 updateModalContent();
                 $('#order-confirmation-modal').fadeIn(300);
                 $('body').addClass('modal-open');
@@ -369,6 +362,7 @@ function add_order_confirmation_modal() {
 
             // モーダルの内容を更新
             function updateModalContent() {
+                
                 // 商品一覧
                 var orderItems = '';
                 $('.woocommerce-checkout-review-order-table .cart_item').each(function() {

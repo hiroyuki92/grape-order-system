@@ -144,12 +144,61 @@ function make_checkout_phone_required($fields) {
     return $fields;
 }
 
-// シンプルなバリデーション（自宅配送のログインチェックのみ）
-add_action('woocommerce_checkout_process', 'simple_home_delivery_validation');
-function simple_home_delivery_validation() {
-    $home_delivery = !empty($_POST['home_delivery']);
-    
-    if ($home_delivery && !is_user_logged_in()) {
-        wc_add_notice('自宅配送をご利用いただくには、ログインが必要です。', 'error');
+// 「別の住所へ配送」チェックボックスに説明テキストを追加
+add_action('wp_footer', 'add_shipping_checkbox_description');
+function add_shipping_checkbox_description() {
+    if (!is_checkout()) {
+        return;
     }
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        function addShippingDescription() {
+            // 既存の説明文を削除
+            $('.shipping-checkbox-description').remove();
+            
+            // チェックボックスを探す
+            var $checkbox = $('#ship-to-different-address-checkbox');
+            if ($checkbox.length > 0) {
+                // チェックボックスの親要素（labelまたはp要素）を取得
+                var $checkboxContainer = $checkbox.closest('label, p, .form-row');
+                
+                // 説明文のHTMLを作成
+                var descriptionHtml = '<div class="shipping-checkbox-description" style="margin-top: 8px; margin-bottom: 15px; padding-left: 0;">' +
+                    '<p style="margin: 0; font-size: 14px; color: #666; font-style: italic;">' +
+                    'ご自宅へ配送をご希望の場合はチェックを外してください' +
+                    '</p>' +
+                    '</div>';
+                
+                // チェックボックスコンテナの直後に挿入
+                $checkboxContainer.after(descriptionHtml);
+                
+                // 初期表示状態を設定
+                updateShippingDescription();
+            }
+        }
+        
+        // チェックボックスの状態に応じて説明文の表示を調整
+        function updateShippingDescription() {
+            var isChecked = $('#ship-to-different-address-checkbox').is(':checked');
+            if (isChecked) {
+                $('.shipping-checkbox-description').show();
+            } else {
+                $('.shipping-checkbox-description').hide();
+            }
+        }
+        
+        // 初回実行
+        addShippingDescription();
+        
+        // チェックボックスの変更時
+        $(document).on('change', '#ship-to-different-address-checkbox', updateShippingDescription);
+        
+        // チェックアウト更新時（説明文を再追加）
+        $(document.body).on('updated_checkout', function() {
+            setTimeout(addShippingDescription, 100);
+        });
+    });
+    </script>
+    <?php
 }

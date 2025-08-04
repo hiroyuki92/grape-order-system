@@ -232,6 +232,50 @@ function add_order_confirmation_modal() {
         jQuery(document).ready(function($) {
             var isConfirmed = false;
             var originalForm = null;
+            
+            // WooCommerce風エラーメッセージ表示関数（複数対応）
+            function showErrorMessages(messages) {
+                // 既存のエラーメッセージを削除
+                $('.woocommerce-error, .woocommerce-message').remove();
+                
+                // 配列でない場合は配列に変換
+                if (!Array.isArray(messages)) {
+                    messages = [messages];
+                }
+                
+                if (messages.length === 0) {
+                    return;
+                }
+                
+                // 複数のエラーメッセージを作成
+                var errorHtml = '<div class="woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout">' +
+                    '<div class="woocommerce-error" role="alert">';
+                
+                if (messages.length === 1) {
+                    errorHtml += '<strong>エラー:</strong> ' + messages[0];
+                } else {
+                    errorHtml += '<strong>以下のエラーを修正してください:</strong><ul>';
+                    for (var i = 0; i < messages.length; i++) {
+                        errorHtml += '<li>' + messages[i] + '</li>';
+                    }
+                    errorHtml += '</ul>';
+                }
+                
+                errorHtml += '</div></div>';
+                
+                // フォームの上に挿入
+                $('form.checkout').prepend(errorHtml);
+                
+                // ページトップにスクロール
+                $('html, body').animate({
+                    scrollTop: $('form.checkout').offset().top - 100
+                }, 500);
+            }
+            
+            // 単一エラー用のヘルパー関数（後方互換性）
+            function showErrorMessage(message) {
+                showErrorMessages([message]);
+            }
 
             // 「注文する」ボタンをクリックした時の処理
             $('body').on('click', '#place_order', function(e) {
@@ -240,21 +284,47 @@ function add_order_confirmation_modal() {
                     return true;
                 }
 
-                // フォームバリデーション
-                var form = $('form.checkout');
+                // 全てのバリデーションエラーを収集
+                var errors = [];
+                var firstErrorField = null;
                 
-                // 領収書バリデーション
-                var receiptRequired = $('input[name="receipt_required"]').is(':checked');
-                var receiptName = $('input[name="receipt_name"]').val();
+                // 必須フィールドをチェック
+                $('form.checkout .validate-required input, form.checkout .validate-required select, form.checkout .validate-required textarea').each(function() {
+                    var $field = $(this);
+                    var $wrapper = $field.closest('.form-row');
+                    
+                    // 非表示フィールドはスキップ
+                    if ($wrapper.is(':visible') && $field.is(':visible')) {
+                        if (!$field.val() || $field.val().trim() === '') {
+                            var label = $wrapper.find('label').text().replace('*', '').trim();
+                            if (label) {
+                                errors.push(label + 'は必須項目です。');
+                                if (!firstErrorField) {
+                                    firstErrorField = $field;
+                                }
+                            }
+                        }
+                    }
+                });
                 
-                if (receiptRequired && (!receiptName || receiptName.trim() === '')) {
-                    alert('領収書が必要な場合は宛名の入力が必要です。');
-                    $('input[name="receipt_name"]').focus();
+                // カスタムバリデーションも実行
+                var customErrors = getCustomValidationErrors();
+                errors = errors.concat(customErrors);
+                
+                // エラーがある場合は表示
+                if (errors.length > 0) {
+                    showErrorMessages(errors);
+                    if (firstErrorField) {
+                        firstErrorField.focus();
+                    }
+                    e.preventDefault();
                     return false;
                 }
                 
-                if (!form[0].checkValidity()) {
-                    return true; // バリデーションエラーがある場合は通常の処理
+                // HTML5バリデーションもチェック
+                var form = $('form.checkout')[0];
+                if (!form.checkValidity()) {
+                    return true; // ブラウザの標準バリデーションに任せる
                 }
 
                 // 確認モーダルを表示
@@ -262,6 +332,37 @@ function add_order_confirmation_modal() {
                 showConfirmationModal();
                 return false;
             });
+            
+            // カスタムバリデーションエラーを収集する関数
+            function getCustomValidationErrors() {
+                var errors = [];
+                
+                // 電話番号バリデーション（自宅配送対応）
+                var isHomeDelivery = $('#home_delivery_checkbox').is(':checked');
+                
+                if (isHomeDelivery) {
+                    // 自宅配送の場合：ログインユーザーかチェック
+                    if (!$('body').hasClass('logged-in')) {
+                        errors.push('自宅配送をご利用いただくには、ログインが必要です。');
+                    }
+                } else {
+                    // ギフト配送の場合：電話番号入力をチェック
+                    var phoneValue = $('#billing_phone').val();
+                    if (!phoneValue || phoneValue.trim() === '') {
+                        errors.push('お送り主の電話番号は必須項目です。');
+                    }
+                }
+                
+                // 領収書バリデーション
+                var receiptRequired = $('input[name="receipt_required"]').is(':checked');
+                var receiptName = $('input[name="receipt_name"]').val();
+                
+                if (receiptRequired && (!receiptName || receiptName.trim() === '')) {
+                    errors.push('領収書が必要な場合は宛名の入力が必要です。');
+                }
+                
+                return errors;
+            }
 
             // 確認モーダルを表示する関数
             function showConfirmationModal() {

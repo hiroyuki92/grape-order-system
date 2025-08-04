@@ -90,6 +90,16 @@ function add_home_delivery_checkbox() {
                 $shippingFields.slideDown(300);
                 $billingTitle.text('お送り主詳細');
                 $shippingTitle.text('お届け先住所');
+                
+                // ギフト配送でも電話番号は登録済み番号を表示
+                <?php if (is_user_logged_in()): 
+                    $user_id = get_current_user_id();
+                    $user_phone = get_user_meta($user_id, 'billing_phone', true);
+                    if ($user_phone): ?>
+                var userPhone = '<?php echo esc_js($user_phone); ?>';
+                $('#billing_phone').val(userPhone);
+                    <?php endif; ?>
+                <?php endif; ?>
             }
         }
         

@@ -311,6 +311,11 @@ function add_order_confirmation_modal() {
                 var customErrors = getCustomValidationErrors();
                 errors = errors.concat(customErrors);
                 
+                // 重複するエラーメッセージを除去
+                errors = errors.filter(function(item, index) {
+                    return errors.indexOf(item) === index;
+                });
+                
                 // エラーがある場合は表示
                 if (errors.length > 0) {
                     showErrorMessages(errors);
@@ -337,20 +342,10 @@ function add_order_confirmation_modal() {
             function getCustomValidationErrors() {
                 var errors = [];
                 
-                // 電話番号バリデーション（自宅配送対応）
+                // 自宅配送のログインチェック
                 var isHomeDelivery = $('#home_delivery_checkbox').is(':checked');
-                
-                if (isHomeDelivery) {
-                    // 自宅配送の場合：ログインユーザーかチェック
-                    if (!$('body').hasClass('logged-in')) {
-                        errors.push('自宅配送をご利用いただくには、ログインが必要です。');
-                    }
-                } else {
-                    // ギフト配送の場合：電話番号入力をチェック
-                    var phoneValue = $('#billing_phone').val();
-                    if (!phoneValue || phoneValue.trim() === '') {
-                        errors.push('お送り主の電話番号は必須項目です。');
-                    }
+                if (isHomeDelivery && !$('body').hasClass('logged-in')) {
+                    errors.push('自宅配送をご利用いただくには、ログインが必要です。');
                 }
                 
                 // 領収書バリデーション

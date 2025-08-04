@@ -144,24 +144,12 @@ function make_checkout_phone_required($fields) {
     return $fields;
 }
 
-// サーバーサイドバリデーション（バックアップ）
-add_action('woocommerce_checkout_process', 'phone_validation_backup');
-function phone_validation_backup() {
+// シンプルなバリデーション（自宅配送のログインチェックのみ）
+add_action('woocommerce_checkout_process', 'simple_home_delivery_validation');
+function simple_home_delivery_validation() {
     $home_delivery = !empty($_POST['home_delivery']);
     
-    if ($home_delivery) {
-        if (!is_user_logged_in()) {
-            wc_add_notice('自宅配送をご利用いただくには、ログインが必要です。', 'error');
-            return;
-        }
-        
-        $user_phone = get_user_meta(get_current_user_id(), 'billing_phone', true);
-        if (empty($user_phone)) {
-            wc_add_notice('お送り主の電話番号は必須項目です。マイアカウントで電話番号を登録してください。', 'error');
-        }
-    } else {
-        if (empty($_POST['billing_phone'])) {
-            wc_add_notice('お送り主の電話番号は必須項目です。', 'error');
-        }
+    if ($home_delivery && !is_user_logged_in()) {
+        wc_add_notice('自宅配送をご利用いただくには、ログインが必要です。', 'error');
     }
 }

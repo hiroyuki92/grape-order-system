@@ -590,6 +590,7 @@ function add_order_confirmation_modal() {
                 var city = $('input[name="' + prefix + 'city"]').val() || '';
                 var address1 = $('input[name="' + prefix + 'address_1"]').val() || '';
                 var address2 = $('input[name="' + prefix + 'address_2"]').val() || '';
+                var phone = $('input[name="' + prefix + 'phone"]').val() || '';
 
                 address = lastName + ' ' + firstName + '<br>';
                 address += '〒' + postcode + '<br>';
@@ -598,6 +599,7 @@ function add_order_confirmation_modal() {
                 if (address2) {
                     address += '<br>' + address2;
                 }
+                address += '<br><strong>電話番号:</strong> ' + phone;
 
                 return address;
             }

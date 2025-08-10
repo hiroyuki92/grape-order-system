@@ -5,3 +5,29 @@ wp-content/uploads/
 .htaccess
 wp-content/cache/
 *.po~
+
+# バックアップファイル関連
+wp-content/ai1wm-backups/
+wp-content/backup*/
+wp-content/backwpup-*/
+*.wpress
+*.sql
+*.tar.gz
+
+# WordPressプラグイン・アップデート関連
+wp-content/upgrade/
+wp-content/updraft/
+
+# 開発・デバッグファイル
+debug.log
+error_log
+wp-content/debug.log
+
+# 一時ファイル
+Thumbs.db
+*.tmp
+*.bak
+
+# セキュリティ関連
+.env
+wp-config-local.php

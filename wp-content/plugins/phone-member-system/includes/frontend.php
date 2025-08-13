@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// ログインフォームのラベル変更（顧客ページのみ）
+// ログインフォームのラベル変更（顧客ページとチェックアウトページ）
 add_filter('gettext', 'pms_change_login_form_labels', 20, 3);
 function pms_change_login_form_labels($translated_text, $text, $domain) {
     // 管理画面では変更しない
@@ -32,14 +32,18 @@ function pms_change_login_form_labels($translated_text, $text, $domain) {
         case 'Dashboard':
         case 'ダッシュボード':
             return 'ホーム';
+        // チェックアウトページ専用のメッセージ変更
+        case 'If you have shopped with us before, please enter your details below. If you are a new customer, please proceed to the Billing section.':
+        case '以前に当店で買い物をしたことがある方は以下に詳細を入力してください。新規のお客様は「請求と配送」セクションに進んでください。':
+            return '電話番号とパスワードを入力してください。';
     }
     return $translated_text;
 }
 
-// ログインフォームのカスタマイズ（顧客ページのみ）
+// ログインフォームのカスタマイズ（顧客ページとチェックアウトページ）
 add_action('wp_footer', 'pms_customize_woocommerce_login');
 function pms_customize_woocommerce_login() {
-    if (is_account_page() && !is_admin()) {
+    if ((is_account_page() || is_checkout()) && !is_admin()) {
         ?>
         <script>
         jQuery(document).ready(function($) {

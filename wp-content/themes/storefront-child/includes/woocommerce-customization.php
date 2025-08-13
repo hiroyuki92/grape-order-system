@@ -114,10 +114,10 @@ add_filter('gettext', 'change_my_account_description', 20, 3);
 function change_my_account_description($translated_text, $text, $domain) {
     if ($domain == 'woocommerce') {
         if (strpos($text, 'From your account dashboard you can view your') !== false) {
-            return 'マイページでは、これまでのご注文を確認したり、住所やパスワードを変更したりできます。';
+            return 'マイアカウントでは、これまでのご注文を確認したり、住所やパスワードを変更したりできます。';
         }
         if (strpos($translated_text, 'アカウントダッシュボードでは、') !== false) {
-            return 'マイページでは、これまでのご注文を確認したり、住所やパスワードを変更したりできます。';
+            return 'マイアカウントでは、これまでのご注文を確認したり、住所やパスワードを変更したりできます。';
         }
     }
     return $translated_text;
@@ -201,4 +201,18 @@ function add_shipping_checkbox_description() {
     });
     </script>
     <?php
+}
+
+// 注文一覧の「操作」を「注文詳細」、「ステータス」を「注文状況」に変更
+add_filter('gettext', 'change_order_table_headers', 20, 3);
+function change_order_table_headers($translated_text, $text, $domain) {
+    if ($domain == 'woocommerce') {
+        if ($text == 'Actions' || $translated_text == '操作') {
+            return '注文詳細';
+        }
+        if ($text == 'Status' || $translated_text == 'ステータス') {
+            return '注文状況';
+        }
+    }
+    return $translated_text;
 }

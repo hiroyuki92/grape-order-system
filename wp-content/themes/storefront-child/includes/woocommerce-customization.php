@@ -1,3 +1,4 @@
+
 <?php
 /**
  * その他のWooCommerceカスタマイズ
@@ -216,6 +217,7 @@ function change_order_table_headers($translated_text, $text, $domain) {
     }
     return $translated_text;
 }
+
 // 検索アイコンを商品一覧用に変更
 add_action('wp_head', 'change_search_icon_to_shop_link');
 function change_search_icon_to_shop_link() {
@@ -244,33 +246,95 @@ function change_search_icon_to_shop_link() {
     <?php
 }
 
-// 検索テキストを「商品一覧」に変更
-add_action('wp_footer', 'change_search_text_to_product_list');
-function change_search_text_to_product_list() {
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        // 検索テキストを「商品一覧」に変更
-        $('li.search a, li.search.active a').text('商品一覧');
-    });
-    </script>
-    <?php
+
+// MDI（Material Design Icons）を読み込み
+add_action('wp_enqueue_scripts', function () {
+    wp_enqueue_style(
+        'mdi',
+        'https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css',
+        [],
+        '7.4.47'
+    );
+    wp_enqueue_script('jquery');
+});
+
+// フッターバーの検索アイコンを“ぶどう”に置き換え
+add_action('wp_head', function(){ ?>
+<style>
+/* 元の虫眼鏡 (::before) を消す */
+.storefront-handheld-footer-bar ul li.search > a::before { content: none !important; }
+
+/* アイコン＋ラベルを中央寄せ */
+.storefront-handheld-footer-bar ul li.search a{
+  text-indent: 0 !important;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color:#333;
 }
 
-// 検索アイコンを商品一覧ページにリンク変更
-add_action('wp_footer', 'redirect_search_icon_to_shop');
-function redirect_search_icon_to_shop() {
-    ?>
-    <script>
-    jQuery(document).ready(function($) {
-        // 検索アイコン（虫眼鏡マーク）をクリックした時に商品一覧ページに移動
-        $(document).on('click', 'li.search a, li.search.active a', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            window.location.href = '<?php echo esc_url(wc_get_page_permalink('shop')); ?>';
-            return false;
-        });
-    });
-    </script>
-    <?php
+/* 初期表示時の「検索」テキストのみを非表示にする */
+.storefront-handheld-footer-bar ul li.search > a:not([data-grapes-initialized]) {
+  color: transparent !important;
 }
+
+/* ブドウアイコン初期化後は色を戻す */
+.storefront-handheld-footer-bar ul li.search > a[data-grapes-initialized] {
+  color: #333 !important;
+}
+
+/* アイコンサイズ（ここを変更すると大きさ調整できる） */
+.storefront-handheld-footer-bar ul li.search a .mdi{
+  font-family: "Material Design Icons" !important;
+  font-size: 30px;
+  line-height: 1;
+  display: inline-block !important;
+}
+
+/* ラベル */
+.storefront-handheld-footer-bar ul li.search a .label{
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* アイコンの"中身"を直指定（強制マッピング） */
+.mdi.mdi-fruit-grapes::before{ content: "\F1044" !important; }
+.mdi.mdi-fruit-grapes-outline::before{ content: "\F1045" !important; }
+
+/* 検索フォームは非表示 */
+.storefront-handheld-footer-bar li.search .site-search,
+.storefront-handheld-footer-bar li.search.active .site-search,
+.storefront-handheld-footer-bar .site-search form,
+.storefront-handheld-footer-bar .site-search .widget {
+  display: none !important;
+}
+</style>
+<?php });
+
+// クリックで商品一覧へ遷移
+add_action('wp_footer', function () { ?>
+<script>
+jQuery(function($){
+  var selector = 'li.search a, li.search.active a';
+
+  // 中身を置き換え（ぶどう + ラベル）
+  $(selector).each(function(){
+    var $a = $(this);
+    if ($a.data('grapes-initialized')) return;
+    $a.data('grapes-initialized', true);
+    $a.attr('data-grapes-initialized', 'true'); // HTML属性も設定
+    $a.html('<i class="mdi mdi-fruit-grapes" aria-hidden="true"></i>');
+  });
+
+  // クリックでショップへ
+  $(document).on('click', selector, function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    window.location.href = '<?php echo esc_js( esc_url_raw( wc_get_page_permalink( 'shop' ) ) ); ?>';
+    return false;
+  });
+});
+</script>
+<?php });

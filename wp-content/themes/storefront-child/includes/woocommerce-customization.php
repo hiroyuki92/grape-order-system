@@ -216,3 +216,61 @@ function change_order_table_headers($translated_text, $text, $domain) {
     }
     return $translated_text;
 }
+// 検索アイコンを商品一覧用に変更
+add_action('wp_head', 'change_search_icon_to_shop_link');
+function change_search_icon_to_shop_link() {
+    ?>
+    <style>
+    /* 検索メニューを表示させる */
+    li.search,
+    li.search.active {
+        display: block !important;
+    }
+    
+    /* 元の検索アイコンを表示（検索機能は無効のまま） */
+    li.search,
+    li.search.active {
+        display: block !important;
+    }
+    
+    /* 検索フォームのみ無効化（アイコンは残す） */
+    li.search .site-search,
+    li.search.active .site-search,
+    .site-search form,
+    .site-search .widget {
+        display: none !important;
+    }
+    </style>
+    <?php
+}
+
+// 検索テキストを「商品一覧」に変更
+add_action('wp_footer', 'change_search_text_to_product_list');
+function change_search_text_to_product_list() {
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        // 検索テキストを「商品一覧」に変更
+        $('li.search a, li.search.active a').text('商品一覧');
+    });
+    </script>
+    <?php
+}
+
+// 検索アイコンを商品一覧ページにリンク変更
+add_action('wp_footer', 'redirect_search_icon_to_shop');
+function redirect_search_icon_to_shop() {
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        // 検索アイコン（虫眼鏡マーク）をクリックした時に商品一覧ページに移動
+        $(document).on('click', 'li.search a, li.search.active a', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = '<?php echo esc_url(wc_get_page_permalink('shop')); ?>';
+            return false;
+        });
+    });
+    </script>
+    <?php
+}

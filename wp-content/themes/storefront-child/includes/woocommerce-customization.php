@@ -242,6 +242,40 @@ function change_search_icon_to_shop_link() {
     .site-search .widget {
         display: none !important;
     }
+    
+    /* スマホでの名前フィールド（姓・名）を横並びにする */
+    @media (min-width: 387px) and (max-width: 768px) {
+        .woocommerce-MyAccount-content .woocommerce-form-row--first,
+        .woocommerce-MyAccount-content .woocommerce-form-row--last {
+            width: 48% !important;
+            display: inline-block !important;
+            vertical-align: top !important;
+        }
+        
+        .woocommerce-MyAccount-content .woocommerce-form-row--first {
+            margin-right: 4% !important;
+        }
+        
+        .woocommerce-MyAccount-content .woocommerce-form-row--last {
+            margin-left: 0 !important;
+        }
+        
+        /* フィールド間のスペース調整 */
+        .woocommerce-MyAccount-content .form-row {
+            margin-bottom: 20px !important;
+        }
+    }
+    
+    /* 386px以下の極小画面では縦並びに戻す */
+    @media (max-width: 386px) {
+        .woocommerce-MyAccount-content .woocommerce-form-row--first,
+        .woocommerce-MyAccount-content .woocommerce-form-row--last {
+            width: 100% !important;
+            display: block !important;
+            margin-right: 0 !important;
+            margin-left: 0 !important;
+        }
+    }
     </style>
     <?php
 }

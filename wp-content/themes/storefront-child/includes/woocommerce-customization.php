@@ -205,6 +205,7 @@ function add_shipping_checkbox_description() {
 }
 
 // 注文一覧の「操作」を「注文詳細」、「ステータス」を「注文状況」に変更
+// 注文詳細ページの「注：」を「注文メモ：」に変更
 add_filter('gettext', 'change_order_table_headers', 20, 3);
 function change_order_table_headers($translated_text, $text, $domain) {
     if ($domain == 'woocommerce') {
@@ -213,6 +214,9 @@ function change_order_table_headers($translated_text, $text, $domain) {
         }
         if ($text == 'Status' || $translated_text == 'ステータス') {
             return '注文状況';
+        }
+        if ($text == 'Note:' || $translated_text == '注:' || $translated_text == '注：') {
+            return '注文メモ:';
         }
     }
     return $translated_text;

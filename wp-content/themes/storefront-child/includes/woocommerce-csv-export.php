@@ -134,6 +134,11 @@ function handle_csv_export_request() {
         wp_die('セキュリティチェックに失敗しました。');
     }
     
+    // 全ての出力バッファを完全にクリア
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
+    
     // 注文IDを取得
     $order_ids = array();
     if (!empty($_POST['order_ids'])) {
@@ -144,13 +149,19 @@ function handle_csv_export_request() {
     // CSVを生成して出力
     export_orders_to_csv($order_ids);
 }
-add_action('admin_init', 'handle_csv_export_request');
+// admin_initの代わりにinitを使用（より早い段階で処理）
+add_action('init', 'handle_csv_export_request');
 
 /**
  * 注文データをCSV形式で出力
  * @param array $order_ids 出力する注文ID（空の場合は全注文）
  */
 function export_orders_to_csv($order_ids = array()) {
+    // 全ての出力バッファを完全にクリア
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
+    
     // 注文データを取得
     $args = array(
         'limit' => -1,
@@ -177,6 +188,7 @@ function export_orders_to_csv($order_ids = array()) {
     header('Content-Disposition: attachment; filename="' . $filename . '"');
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
     header('Expires: 0');
+    header('Pragma: public');
     
     // UTF-8 BOM を追加（Excel対応）
     echo "\xEF\xBB\xBF";
@@ -459,6 +471,15 @@ function get_order_csv_data($order) {
  * 管理画面にCSVエクスポート機能の説明を追加
  */
 function add_csv_export_admin_notice() {
+    // CSVエクスポート処理中やAJAX処理中は何も出力しない
+    if (isset($_POST['action']) && $_POST['action'] === 'export_orders_csv') {
+        return;
+    }
+    
+    if (defined('DOING_AJAX') && DOING_AJAX) {
+        return;
+    }
+    
     $screen = get_current_screen();
     
     // HPOS対応のスクリーンIDもチェック

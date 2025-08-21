@@ -284,15 +284,23 @@ function get_csv_headers() {
         '注文ID',
         '注文日時',
         '注文ステータス',
-        '顧客名',
+        '顧客名（ユーザー名）',
         '顧客電話番号',
         '顧客メール',
-        '配送先郵便番号',
-        '配送先都道府県',
-        '配送先市区町村',
-        '配送先住所1',
-        '配送先住所2',
-        '配送先電話番号',
+        '送り主名',
+        '送り主郵便番号',
+        '送り主都道府県',
+        '送り主市区町村',
+        '送り主住所1',
+        '送り主住所2',
+        '送り主電話番号',
+        'お届け先名',
+        'お届け先郵便番号',
+        'お届け先都道府県',
+        'お届け先市区町村',
+        'お届け先住所1',
+        'お届け先住所2',
+        'お届け先電話番号',
         '商品名',
         '商品カテゴリー',
         '商品数量',
@@ -323,12 +331,38 @@ function get_order_csv_data($order) {
     $order_date = $order->get_date_created()->date('Y-m-d H:i:s');
     $order_status = wc_get_order_status_name($order->get_status());
     
-    // 顧客情報
-    $customer_name = $order->get_formatted_billing_full_name();
+    // 顧客情報（ユーザー名）
+    $customer_id = $order->get_customer_id();
+    $customer_name = '';
+    if ($customer_id) {
+        $user = get_user_by('id', $customer_id);
+        if ($user) {
+            // ユーザーの表示名を使用
+            $customer_name = $user->display_name;
+        }
+    }
+    // 顧客情報がない場合は請求先名前を使用
+    if (empty($customer_name)) {
+        $customer_name = $order->get_formatted_billing_full_name();
+    }
+    
     $customer_phone = $order->get_billing_phone();
     $customer_email = $order->get_billing_email();
     
-    // 配送先情報
+    // 送り主情報（請求先）
+    $billing_name = $order->get_formatted_billing_full_name();
+    $billing_postcode = $order->get_billing_postcode();
+    $billing_state = $order->get_billing_state();
+    $billing_city = $order->get_billing_city();
+    $billing_address_1 = $order->get_billing_address_1();
+    $billing_address_2 = $order->get_billing_address_2();
+    $billing_phone = $order->get_billing_phone();
+    
+    // 送り主の都道府県コードを日本語名に変換
+    $billing_state = convert_state_code_to_japanese($billing_state);
+    
+    // お届け先情報（配送先）
+    $shipping_name = $order->get_formatted_shipping_full_name();
     $shipping_postcode = $order->get_shipping_postcode();
     $shipping_state = $order->get_shipping_state();
     $shipping_city = $order->get_shipping_city();
@@ -442,6 +476,14 @@ function get_order_csv_data($order) {
         $customer_name,
         $customer_phone,
         $customer_email,
+        $billing_name,
+        $billing_postcode,
+        $billing_state,
+        $billing_city,
+        $billing_address_1,
+        $billing_address_2,
+        $billing_phone,
+        $shipping_name,
         $shipping_postcode,
         $shipping_state,
         $shipping_city,

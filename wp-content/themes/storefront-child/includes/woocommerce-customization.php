@@ -351,6 +351,41 @@ add_action('wp_head', function(){ ?>
 </style>
 <?php });
 
+https://meet.google.com/eku-frfe-ajs
+// 商品の最大数量を10に制限
+add_filter('woocommerce_quantity_input_args', 'limit_quantity_to_max_10', 10, 2);
+function limit_quantity_to_max_10($args, $product) {
+    $args['max_value'] = 10;
+    return $args;
+}
+
+// カートページでも最大数量を10に制限
+add_filter('woocommerce_cart_item_quantity', 'limit_cart_quantity_to_max_10', 10, 3);
+function limit_cart_quantity_to_max_10($product_quantity, $cart_item_key, $cart_item) {
+    $product = $cart_item['data'];
+    
+    // 数量入力フィールドの最大値を10に設定
+    $product_quantity = woocommerce_quantity_input(array(
+        'input_name'   => "cart[{$cart_item_key}][qty]",
+        'input_value'  => $cart_item['quantity'],
+        'max_value'    => 10,
+        'min_value'    => 0,
+        'product_name' => $product->get_name(),
+    ), $product, false);
+    
+    return $product_quantity;
+}
+
+// 商品をカートに追加する際の数量チェック
+add_filter('woocommerce_add_to_cart_validation', 'validate_max_quantity_10', 10, 3);
+function validate_max_quantity_10($passed, $product_id, $quantity) {
+    if ($quantity > 10) {
+        wc_add_notice(__('申し訳ございませんが、この商品は最大10個までしかご注文いただけません。'), 'error');
+        return false;
+    }
+    return $passed;
+}
+
 // クリックで商品一覧へ遷移
 add_action('wp_footer', function () { ?>
 <script>

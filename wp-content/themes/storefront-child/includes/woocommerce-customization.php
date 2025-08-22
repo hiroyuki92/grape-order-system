@@ -411,3 +411,115 @@ jQuery(function($){
 });
 </script>
 <?php });
+
+// 配達希望日時フィールドの下にメッセージを追加
+add_action('wp_footer', 'add_delivery_date_notice');
+function add_delivery_date_notice() {
+    if (!is_checkout()) {
+        return;
+    }
+    ?>
+    <style>
+    .delivery-date-notice {
+        margin-bottom: 15px;
+        border-radius: 4px;
+    }
+    
+    .delivery-date-notice p {
+        margin: 0;
+        font-size: 14px;
+        color: #495057;
+        line-height: 1.4;
+    }
+    </style>
+    
+    <script>
+    jQuery(document).ready(function($) {
+        function addDeliveryDateNotice() {
+            // 既存の案内文を削除
+            $('.delivery-date-notice').remove();
+            
+            // Order Delivery Date プラグインのフィールドを探す
+            var deliveryFields = [
+                'select[name="wc4jp_delivery_date"]',
+                'select[name="_wcod_delivery_date"]',
+                'input[name="delivery_date"]',
+                'input[name="_delivery_date"]',
+                '#delivery_date',
+                '.orddd_lite_delivery_date_field',
+                '.delivery-date-field',
+                '.wc4jp-delivery-date'
+            ];
+            
+            var $targetField = null;
+            
+            // フィールドを検索
+            for (var i = 0; i < deliveryFields.length; i++) {
+                $targetField = $(deliveryFields[i]);
+                if ($targetField.length > 0) {
+                    break;
+                }
+            }
+            
+            if ($targetField && $targetField.length > 0) {
+                // フィールドの最も近い親のform-rowを取得
+                var $fieldContainer = $targetField.closest('.form-row, .woocommerce-form-row, .orddd-form-field');
+                
+                // 案内文のHTMLを作成
+                var noticeHtml = '<div class="delivery-date-notice">' +
+                    '<p>※配達日のご指定がない場合は、収穫状況に応じて出荷させていただきます</p>' +
+                    '</div>';
+                
+                // フィールドコンテナの直後に挿入
+                if ($fieldContainer.length > 0) {
+                    $fieldContainer.after(noticeHtml);
+                } else {
+                    // フィールドコンテナが見つからない場合は、フィールドの直後に挿入
+                    $targetField.after(noticeHtml);
+                }
+                
+                console.log('配達希望日時の案内文を追加しました');
+            } else {
+                console.log('配達希望日時フィールドが見つかりません');
+            }
+        }
+        
+        // 初回実行
+        setTimeout(addDeliveryDateNotice, 500);
+        
+        // チェックアウト更新時に再実行
+        $(document.body).on('updated_checkout', function() {
+            setTimeout(addDeliveryDateNotice, 100);
+        });
+        
+        // DOM変更を監視して再実行（プラグインが動的にフィールドを追加する場合）
+        var observer = new MutationObserver(function(mutations) {
+            var shouldUpdate = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    $(mutation.addedNodes).each(function() {
+                        if ($(this).is('select, input') || $(this).find('select, input').length > 0) {
+                            shouldUpdate = true;
+                            return false;
+                        }
+                    });
+                }
+            });
+            
+            if (shouldUpdate && $('.delivery-date-notice').length === 0) {
+                setTimeout(addDeliveryDateNotice, 100);
+            }
+        });
+        
+        // フォーム全体を監視
+        var checkoutForm = document.querySelector('form.checkout');
+        if (checkoutForm) {
+            observer.observe(checkoutForm, {
+                childList: true,
+                subtree: true
+            });
+        }
+    });
+    </script>
+    <?php
+}

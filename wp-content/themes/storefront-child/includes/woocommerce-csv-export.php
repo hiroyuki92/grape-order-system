@@ -288,6 +288,7 @@ function get_csv_headers() {
         '顧客電話番号',
         '顧客メール',
         '送り主名',
+        '送り主会社名',
         '送り主郵便番号',
         '送り主都道府県',
         '送り主市区町村',
@@ -295,6 +296,7 @@ function get_csv_headers() {
         '送り主住所2',
         '送り主電話番号',
         'お届け先名',
+        'お届け先会社名',
         'お届け先郵便番号',
         'お届け先都道府県',
         'お届け先市区町村',
@@ -351,6 +353,7 @@ function get_order_csv_data($order) {
     
     // 送り主情報（請求先）
     $billing_name = $order->get_formatted_billing_full_name();
+    $billing_company = $order->get_billing_company();
     $billing_postcode = $order->get_billing_postcode();
     $billing_state = $order->get_billing_state();
     $billing_city = $order->get_billing_city();
@@ -363,6 +366,7 @@ function get_order_csv_data($order) {
     
     // お届け先情報（配送先）
     $shipping_name = $order->get_formatted_shipping_full_name();
+    $shipping_company = $order->get_shipping_company();
     $shipping_postcode = $order->get_shipping_postcode();
     $shipping_state = $order->get_shipping_state();
     $shipping_city = $order->get_shipping_city();
@@ -477,6 +481,7 @@ function get_order_csv_data($order) {
         $customer_phone,
         $customer_email,
         $billing_name,
+        $billing_company,
         $billing_postcode,
         $billing_state,
         $billing_city,
@@ -484,6 +489,7 @@ function get_order_csv_data($order) {
         $billing_address_2,
         $billing_phone,
         $shipping_name,
+        $shipping_company,
         $shipping_postcode,
         $shipping_state,
         $shipping_city,

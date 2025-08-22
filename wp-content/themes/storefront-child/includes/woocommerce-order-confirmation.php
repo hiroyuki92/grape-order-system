@@ -585,6 +585,7 @@ function add_order_confirmation_modal() {
                 
                 var lastName = $('input[name="' + prefix + 'last_name"]').val() || '';
                 var firstName = $('input[name="' + prefix + 'first_name"]').val() || '';
+                var company = $('input[name="' + prefix + 'company"]').val() || '';
                 var postcode = $('input[name="' + prefix + 'postcode"]').val() || '';
                 var state = $('select[name="' + prefix + 'state"]').find('option:selected').text() || $('input[name="' + prefix + 'state"]').val() || '';
                 var city = $('input[name="' + prefix + 'city"]').val() || '';
@@ -593,6 +594,9 @@ function add_order_confirmation_modal() {
                 var phone = $('input[name="' + prefix + 'phone"]').val() || '';
 
                 address = lastName + ' ' + firstName + '<br>';
+                if (company) {
+                    address += '<strong>会社名:</strong> ' + company + '<br>';
+                }
                 address += '〒' + postcode + '<br>';
                 address += state + city + '<br>';
                 address += address1;

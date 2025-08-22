@@ -43,13 +43,23 @@ add_action('wp_enqueue_scripts', function() {
                                     // 市区町村
                                     var cityField = form.find("input[name*=\"city\"]");
                                     if (cityField.length) {
-                                        cityField.val(result.address2).trigger("change");
+                                        // 東京都の区部の場合は区名と町名を結合して市区町村に設定
+                                        if (result.address1 === "東京都" && result.address2.includes("区") && result.address3) {
+                                            cityField.val(result.address2 + result.address3).trigger("change");
+                                        } else {
+                                            cityField.val(result.address2).trigger("change");
+                                        }
                                     }
                                     
                                     // 住所
                                     var addressField = form.find("input[name*=\"address_1\"]");
                                     if (addressField.length) {
-                                        addressField.val(result.address3).trigger("change");
+                                        // 東京都の区部の場合は住所1を空にする（町名は市区町村に含めたため）
+                                        if (result.address1 === "東京都" && result.address2.includes("区") && result.address3) {
+                                            addressField.val("").trigger("change");
+                                        } else {
+                                            addressField.val(result.address3).trigger("change");
+                                        }
                                     }
                                 }
                             }.bind(this)

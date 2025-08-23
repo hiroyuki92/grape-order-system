@@ -467,7 +467,8 @@ function add_delivery_date_notice() {
                 
                 // 案内文のHTMLを作成
                 var noticeHtml = '<div class="delivery-date-notice">' +
-                    '<p>※配達日のご指定がない場合は、収穫状況に応じて出荷させていただきます</p>' +
+                    '<p>※配達日のご指定がない場合は、収穫状況に応じて出荷させていただきます<br>' +
+                    '※配達希望日は９月３日〜９月１７日の中からお選びいただけます</p>' +
                     '</div>';
                 
                 // フィールドコンテナの直後に挿入

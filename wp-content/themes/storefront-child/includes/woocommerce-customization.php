@@ -348,6 +348,37 @@ add_action('wp_head', function(){ ?>
 .storefront-handheld-footer-bar .site-search .widget {
   display: none !important;
 }
+
+/* 支払い方法の選択肢を白丸にする */
+#payment .payment_methods .woocommerce-PaymentMethod label::before,
+#payment .payment_methods .wc_payment_method label::before {
+  font-family: inherit !important;
+  font-weight: normal !important;
+  content: '' !important;
+  display: inline-block !important;
+  width: 16px !important;
+  height: 16px !important;
+  border: 2px solid #ccc !important;
+  border-radius: 50% !important;
+  background-color: white !important;
+  margin-right: 8px !important;
+  position: relative !important;
+  vertical-align: middle !important;
+}
+
+/* 選択時：緑のボーダーとbox-shadowで中央の点を表現 */
+#payment .payment_methods .woocommerce-PaymentMethod input[type="radio"]:checked + label::before,
+#payment .payment_methods .wc_payment_method input[type="radio"]:checked + label::before {
+  border-color: #28a745 !important;
+  background-color: white !important;
+  box-shadow: inset 0 0 0 4px #28a745 !important;
+}
+
+/* ラジオボタン本体を非表示 */
+#payment .payment_methods .woocommerce-PaymentMethod input[type="radio"],
+#payment .payment_methods .wc_payment_method input[type="radio"] {
+  display: none !important;
+}
 </style>
 <?php });
 

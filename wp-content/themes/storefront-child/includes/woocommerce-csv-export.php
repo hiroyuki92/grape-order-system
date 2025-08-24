@@ -166,8 +166,8 @@ function export_orders_to_csv($order_ids = array()) {
     $args = array(
         'limit' => -1,
         'status' => 'any',
-        'orderby' => 'date',
-        'order' => 'DESC',
+        'orderby' => 'ID',
+        'order' => 'ASC',
     );
     
     if (!empty($order_ids)) {

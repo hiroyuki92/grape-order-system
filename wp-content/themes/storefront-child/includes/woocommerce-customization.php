@@ -382,6 +382,21 @@ add_action('wp_head', function(){ ?>
 </style>
 <?php });
 
+// PayPay決済方法の説明文をカスタマイズ
+add_filter('woocommerce_gateway_description', 'customize_paypay_description', 20, 2);
+function customize_paypay_description($description, $payment_id) {
+    if ($payment_id === 'cheque' || strpos(strtolower($description), 'paypay') !== false) {
+        return '<div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 12px; margin-top: 8px;">
+                  <strong style="color: #856404; font-size: 16px;">⚠️ 重要：お支払いタイミングについて</strong><br>
+                  <span style="color: #856404; font-size: 14px; line-height: 1.4;">
+                    PayPayでのお支払いは<strong>商品発送後</strong>にご案内いたします。<br>
+                    ご注文確定時点では決済されませんので、ご安心ください。
+                  </span>
+                </div>';
+    }
+    return $description;
+}
+
 https://meet.google.com/eku-frfe-ajs
 // 商品の最大数量を10に制限
 add_filter('woocommerce_quantity_input_args', 'limit_quantity_to_max_10', 10, 2);

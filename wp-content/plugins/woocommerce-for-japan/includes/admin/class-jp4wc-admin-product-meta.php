@@ -3,11 +3,12 @@
  * Japanized for WooCommerce
  *
  * @version     2.6.0
- * @package     Product Meta
+ * @package     Japanized_For_WooCommerce
  * @author      ArtisanWorkshop
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Hooks use before_jp4wc_/after_jp4wc_/wcs_ prefixes from WC Subscriptions integration; renaming would be a breaking change for third-party hooks.
 
-use ArtisanWorkshop\WooCommerce\PluginFramework\v2_0_12 as Framework;
+use ArtisanWorkshop\PluginFramework\v2_0_14 as Framework;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,7 +51,7 @@ class JP4WC_Admin_Product_Meta {
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->jp4wc_plugin = new Framework\JP4WC_Plugin();
+		$this->jp4wc_plugin = new Framework\JP4WC_Framework();
 		$this->prefix       = 'wc4jp-';
 		if ( class_exists( 'WC_Subscriptions' ) ) {
 			// Add subscription pricing fields on edit product page.
@@ -80,7 +81,7 @@ class JP4WC_Admin_Product_Meta {
 		<span class="wrap">
 			<input type="text" id="_subscription_price_string" name="_subscription_price_string" class="wc_input_text" placeholder="<?php echo esc_attr_x( 'e.g. 5.90 per month', 'example price string', 'woocommerce-for-japan' ); ?>" value="<?php echo esc_attr( $price_string ); ?>" />
 		</span>
-		<?php echo wcs_help_tip( $price_string_tooltip ); ?>
+		<?php echo wp_kses_post( wcs_help_tip( $price_string_tooltip ) ); ?>
 		</p>
 		<?php
 
@@ -123,11 +124,14 @@ class JP4WC_Admin_Product_Meta {
 	 */
 	public static function jp4wc_save_subscription_meta( $post_id ) {
 
-		if ( empty( $_POST['_wcsnonce'] ) || ! wp_verify_nonce( $_POST['_wcsnonce'], 'wcs_subscription_meta' ) || false === self::is_subscription_product_save_request( $post_id, apply_filters( 'woocommerce_subscription_product_types', array( WC_Subscriptions::$name ) ) ) ) {
+		if ( empty( $_POST['_wcsnonce'] )
+			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wcsnonce'] ) ), 'wcs_subscription_meta' )
+		|| false === self::is_subscription_product_save_request( $post_id, apply_filters( 'woocommerce_subscription_product_types', array( WC_Subscriptions::$name ) ) )
+		) {
 			return;
 		}
 
-		$subscription_price_string = isset( $_REQUEST['_subscription_price_string'] ) ? wc_clean( $_REQUEST['_subscription_price_string'] ) : '';
+		$subscription_price_string = isset( $_REQUEST['_subscription_price_string'] ) ? wc_clean( sanitize_text_field( wp_unslash( $_REQUEST['_subscription_price_string'] ) ) ) : '';
 		update_post_meta( $post_id, '_subscription_price_string', $subscription_price_string );
 
 		// To prevent running this function on multiple save_post triggered events per update. Similar to JP4WC_Admin_Product_Meta:$saved_meta_boxes implementation.
@@ -143,11 +147,11 @@ class JP4WC_Admin_Product_Meta {
 	 * @since 2.2
 	 */
 	public static function jp4wc_save_product_variation( int $variation_id, int $index ) {
-		if ( ! WC_Subscriptions_Product::is_subscription( $variation_id ) || empty( $_POST['_wcsnonce_save_variations'] ) || ! wp_verify_nonce( $_POST['_wcsnonce_save_variations'], 'wcs_subscription_variations' ) ) {
+		if ( ! WC_Subscriptions_Product::is_subscription( $variation_id ) || empty( $_POST['_wcsnonce_save_variations'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wcsnonce_save_variations'] ) ), 'wcs_subscription_variations' ) ) {
 			return;
 		}
 		if ( isset( $_POST['variable_subscription_price_string'][ $index ] ) ) {
-			$subscription_price_string = wc_format_decimal( wp_unslash( $_POST['variable_subscription_price_string'][ $index ] ) );
+			$subscription_price_string = wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['variable_subscription_price_string'][ $index ] ) ) );
 			update_post_meta( $variation_id, '_subscription_price_string', $subscription_price_string );
 		}
 	}
@@ -164,11 +168,11 @@ class JP4WC_Admin_Product_Meta {
 
 		if ( self::$saved_product_meta ) {
 			$is_subscription_product_save_request = false;
-		} elseif ( empty( $_POST['_wcsnonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['_wcsnonce'] ), 'wcs_subscription_meta' ) ) {
+		} elseif ( empty( $_POST['_wcsnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wcsnonce'] ) ), 'wcs_subscription_meta' ) ) {
 			$is_subscription_product_save_request = false;
-		} elseif ( ! isset( $_POST['product-type'] ) || ! in_array( $_POST['product-type'], $product_types ) ) {
+		} elseif ( ! isset( $_POST['product-type'] ) || ! in_array( $_POST['product-type'], $product_types, true ) ) {
 			$is_subscription_product_save_request = false;
-		} elseif ( empty( $_POST['post_ID'] ) || $_POST['post_ID'] != $post_id ) {
+		} elseif ( empty( $_POST['post_ID'] ) || $_POST['post_ID'] !== $post_id ) {
 			$is_subscription_product_save_request = false;
 		} else {
 			$is_subscription_product_save_request = true;

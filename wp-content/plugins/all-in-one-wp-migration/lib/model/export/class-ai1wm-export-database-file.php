@@ -38,7 +38,19 @@ class Ai1wm_Export_Database_File {
 			return $params;
 		}
 
-		$database_bytes_written = 0;
+		$database_bytes_read = 0;
+
+		// Set encrypt password
+		$encrypt_password = null;
+		if ( isset( $params['options']['encrypt_backups'], $params['options']['encrypt_password'] ) ) {
+			$encrypt_password = $params['options']['encrypt_password'];
+		}
+
+		// Set compression type
+		$compression_type = null;
+		if ( isset( $params['options']['compression_type'] ) ) {
+			$compression_type = $params['options']['compression_type'];
+		}
 
 		// Set archive bytes offset
 		if ( isset( $params['archive_bytes_offset'] ) ) {
@@ -52,6 +64,20 @@ class Ai1wm_Export_Database_File {
 			$database_bytes_offset = (int) $params['database_bytes_offset'];
 		} else {
 			$database_bytes_offset = 0;
+		}
+
+		// Set database bytes written
+		if ( isset( $params['database_bytes_written'] ) ) {
+			$database_bytes_written = (int) $params['database_bytes_written'];
+		} else {
+			$database_bytes_written = 0;
+		}
+
+		// Set database CRC
+		if ( isset( $params['database_crc'] ) ) {
+			$database_crc = $params['database_crc'];
+		} else {
+			$database_crc = null;
 		}
 
 		// Get total database size
@@ -69,13 +95,13 @@ class Ai1wm_Export_Database_File {
 		Ai1wm_Status::info( sprintf( __( 'Archiving database...<br />%d%% complete', 'all-in-one-wp-migration' ), $progress ) );
 
 		// Open the archive file for writing
-		$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ) );
+		$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ), $encrypt_password, $compression_type );
 
 		// Set the file pointer to the one that we have saved
 		$archive->set_file_pointer( $archive_bytes_offset );
 
 		// Add database.sql to archive
-		if ( $archive->add_file( ai1wm_database_path( $params ), AI1WM_DATABASE_NAME, $database_bytes_written, $database_bytes_offset ) ) {
+		if ( $archive->add_file( ai1wm_database_path( $params ), AI1WM_DATABASE_NAME, $database_bytes_read, $database_bytes_offset, $database_bytes_written, $database_crc ) ) {
 
 			// Set progress
 			Ai1wm_Status::info( __( 'Database archived.', 'all-in-one-wp-migration' ) );
@@ -85,6 +111,12 @@ class Ai1wm_Export_Database_File {
 
 			// Unset database bytes offset
 			unset( $params['database_bytes_offset'] );
+
+			// Unset database bytes written
+			unset( $params['database_bytes_written'] );
+
+			// Unset database CRC
+			unset( $params['database_crc'] );
 
 			// Unset total database size
 			unset( $params['total_database_size'] );
@@ -109,6 +141,12 @@ class Ai1wm_Export_Database_File {
 
 			// Set database bytes offset
 			$params['database_bytes_offset'] = $database_bytes_offset;
+
+			// Set database bytes written
+			$params['database_bytes_written'] = $database_bytes_written;
+
+			// Set database CRC
+			$params['database_crc'] = $database_crc;
 
 			// Set total database size
 			$params['total_database_size'] = $total_database_size;

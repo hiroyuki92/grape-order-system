@@ -33,6 +33,18 @@ class Ai1wm_Export_Media {
 
 	public static function execute( $params ) {
 
+		// Set encrypt password
+		$encrypt_password = null;
+		if ( isset( $params['options']['encrypt_backups'], $params['options']['encrypt_password'] ) ) {
+			$encrypt_password = $params['options']['encrypt_password'];
+		}
+
+		// Set compression type
+		$compression_type = null;
+		if ( isset( $params['options']['compression_type'] ) ) {
+			$compression_type = $params['options']['compression_type'];
+		}
+
 		// Set archive bytes offset
 		if ( isset( $params['archive_bytes_offset'] ) ) {
 			$archive_bytes_offset = (int) $params['archive_bytes_offset'];
@@ -45,6 +57,13 @@ class Ai1wm_Export_Media {
 			$file_bytes_offset = (int) $params['file_bytes_offset'];
 		} else {
 			$file_bytes_offset = 0;
+		}
+
+		// Set file bytes written
+		if ( isset( $params['file_bytes_written'] ) ) {
+			$file_bytes_written = (int) $params['file_bytes_written'];
+		} else {
+			$file_bytes_written = 0;
 		}
 
 		// Set media bytes offset
@@ -75,6 +94,13 @@ class Ai1wm_Export_Media {
 			$total_media_files_count = 1;
 		}
 
+		// Set file CRC
+		if ( isset( $params['file_crc'] ) ) {
+			$file_crc = $params['file_crc'];
+		} else {
+			$file_crc = null;
+		}
+
 		// What percent of files have we processed?
 		$progress = (int) min( ( $processed_files_size / $total_media_files_size ) * 100, 100 );
 
@@ -95,25 +121,29 @@ class Ai1wm_Export_Media {
 		if ( fseek( $media_list, $media_bytes_offset ) !== -1 ) {
 
 			// Open the archive file for writing
-			$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ) );
+			$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ), $encrypt_password, $compression_type );
 
 			// Set the file pointer to the one that we have saved
 			$archive->set_file_pointer( $archive_bytes_offset );
 
 			// Loop over files
-			while ( list( $file_abspath, $file_relpath, $file_size, $file_mtime ) = ai1wm_getcsv( $media_list ) ) {
-				$file_bytes_written = 0;
+			while ( ( $row = ai1wm_getcsv( $media_list ) ) !== false ) {
+				list( $file_abspath, $file_relpath, $file_size, $file_mtime ) = $row;
+				$file_bytes_read = 0;
 
 				// Add file to archive
-				if ( ( $completed = $archive->add_file( $file_abspath, 'uploads' . DIRECTORY_SEPARATOR . $file_relpath, $file_bytes_written, $file_bytes_offset ) ) ) {
-					$file_bytes_offset = 0;
+				if ( ( $completed = $archive->add_file( $file_abspath, 'uploads' . DIRECTORY_SEPARATOR . $file_relpath, $file_bytes_read, $file_bytes_offset, $file_bytes_written, $file_crc ) ) ) {
+					$file_crc = null;
+
+					// Reset file bytes
+					$file_bytes_offset = $file_bytes_written = 0;
 
 					// Get media bytes offset
 					$media_bytes_offset = ftell( $media_list );
 				}
 
 				// Increment processed files size
-				$processed_files_size += $file_bytes_written;
+				$processed_files_size += $file_bytes_read;
 
 				// What percent of files have we processed?
 				$progress = (int) min( ( $processed_files_size / $total_media_files_size ) * 100, 100 );
@@ -150,6 +180,9 @@ class Ai1wm_Export_Media {
 			// Unset file bytes offset
 			unset( $params['file_bytes_offset'] );
 
+			// Unset file bytes written
+			unset( $params['file_bytes_written'] );
+
 			// Unset media bytes offset
 			unset( $params['media_bytes_offset'] );
 
@@ -162,6 +195,9 @@ class Ai1wm_Export_Media {
 			// Unset total media files count
 			unset( $params['total_media_files_count'] );
 
+			// Unset file CRC
+			unset( $params['file_crc'] );
+
 			// Unset completed flag
 			unset( $params['completed'] );
 
@@ -172,6 +208,9 @@ class Ai1wm_Export_Media {
 
 			// Set file bytes offset
 			$params['file_bytes_offset'] = $file_bytes_offset;
+
+			// Set file bytes written
+			$params['file_bytes_written'] = $file_bytes_written;
 
 			// Set media bytes offset
 			$params['media_bytes_offset'] = $media_bytes_offset;
@@ -184,6 +223,9 @@ class Ai1wm_Export_Media {
 
 			// Set total media files count
 			$params['total_media_files_count'] = $total_media_files_count;
+
+			// Set file CRC
+			$params['file_crc'] = $file_crc;
 
 			// Set completed flag
 			$params['completed'] = $completed;

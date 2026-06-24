@@ -33,6 +33,18 @@ class Ai1wm_Export_Plugins {
 
 	public static function execute( $params ) {
 
+		// Set encrypt password
+		$encrypt_password = null;
+		if ( isset( $params['options']['encrypt_backups'], $params['options']['encrypt_password'] ) ) {
+			$encrypt_password = $params['options']['encrypt_password'];
+		}
+
+		// Set compression type
+		$compression_type = null;
+		if ( isset( $params['options']['compression_type'] ) ) {
+			$compression_type = $params['options']['compression_type'];
+		}
+
 		// Set archive bytes offset
 		if ( isset( $params['archive_bytes_offset'] ) ) {
 			$archive_bytes_offset = (int) $params['archive_bytes_offset'];
@@ -45,6 +57,13 @@ class Ai1wm_Export_Plugins {
 			$file_bytes_offset = (int) $params['file_bytes_offset'];
 		} else {
 			$file_bytes_offset = 0;
+		}
+
+		// Set file bytes written
+		if ( isset( $params['file_bytes_written'] ) ) {
+			$file_bytes_written = (int) $params['file_bytes_written'];
+		} else {
+			$file_bytes_written = 0;
 		}
 
 		// Set plugins bytes offset
@@ -75,6 +94,13 @@ class Ai1wm_Export_Plugins {
 			$total_plugins_files_count = 1;
 		}
 
+		// Set file CRC
+		if ( isset( $params['file_crc'] ) ) {
+			$file_crc = $params['file_crc'];
+		} else {
+			$file_crc = null;
+		}
+
 		// What percent of files have we processed?
 		$progress = (int) min( ( $processed_files_size / $total_plugins_files_size ) * 100, 100 );
 
@@ -95,25 +121,29 @@ class Ai1wm_Export_Plugins {
 		if ( fseek( $plugins_list, $plugins_bytes_offset ) !== -1 ) {
 
 			// Open the archive file for writing
-			$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ) );
+			$archive = new Ai1wm_Compressor( ai1wm_archive_path( $params ), $encrypt_password, $compression_type );
 
 			// Set the file pointer to the one that we have saved
 			$archive->set_file_pointer( $archive_bytes_offset );
 
 			// Loop over files
-			while ( list( $file_abspath, $file_relpath, $file_size, $file_mtime ) = ai1wm_getcsv( $plugins_list ) ) {
-				$file_bytes_written = 0;
+			while ( ( $row = ai1wm_getcsv( $plugins_list ) ) !== false ) {
+				list( $file_abspath, $file_relpath, $file_size, $file_mtime ) = $row;
+				$file_bytes_read = 0;
 
 				// Add file to archive
-				if ( ( $completed = $archive->add_file( $file_abspath, 'plugins' . DIRECTORY_SEPARATOR . $file_relpath, $file_bytes_written, $file_bytes_offset ) ) ) {
-					$file_bytes_offset = 0;
+				if ( ( $completed = $archive->add_file( $file_abspath, 'plugins' . DIRECTORY_SEPARATOR . $file_relpath, $file_bytes_read, $file_bytes_offset, $file_bytes_written, $file_crc ) ) ) {
+					$file_crc = null;
+
+					// Reset file bytes
+					$file_bytes_offset = $file_bytes_written = 0;
 
 					// Get plugins bytes offset
 					$plugins_bytes_offset = ftell( $plugins_list );
 				}
 
 				// Increment processed files size
-				$processed_files_size += $file_bytes_written;
+				$processed_files_size += $file_bytes_read;
 
 				// What percent of files have we processed?
 				$progress = (int) min( ( $processed_files_size / $total_plugins_files_size ) * 100, 100 );
@@ -150,6 +180,9 @@ class Ai1wm_Export_Plugins {
 			// Unset file bytes offset
 			unset( $params['file_bytes_offset'] );
 
+			// Unset file bytes written
+			unset( $params['file_bytes_written'] );
+
 			// Unset plugins bytes offset
 			unset( $params['plugins_bytes_offset'] );
 
@@ -162,6 +195,9 @@ class Ai1wm_Export_Plugins {
 			// Unset total plugins files count
 			unset( $params['total_plugins_files_count'] );
 
+			// Unset file CRC
+			unset( $params['file_crc'] );
+
 			// Unset completed flag
 			unset( $params['completed'] );
 
@@ -172,6 +208,9 @@ class Ai1wm_Export_Plugins {
 
 			// Set file bytes offset
 			$params['file_bytes_offset'] = $file_bytes_offset;
+
+			// Set file bytes written
+			$params['file_bytes_written'] = $file_bytes_written;
 
 			// Set plugins bytes offset
 			$params['plugins_bytes_offset'] = $plugins_bytes_offset;
@@ -184,6 +223,9 @@ class Ai1wm_Export_Plugins {
 
 			// Set total plugins files count
 			$params['total_plugins_files_count'] = $total_plugins_files_count;
+
+			// Set file CRC
+			$params['file_crc'] = $file_crc;
 
 			// Set completed flag
 			$params['completed'] = $completed;

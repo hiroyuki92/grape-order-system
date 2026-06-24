@@ -113,7 +113,14 @@ class Ai1wm_Database_Mysqli extends Ai1wm_Database {
 	 * @return string
 	 */
 	public function server_info() {
-		return mysqli_get_server_info( $this->wpdb->dbh );
+		static $cached_result = null;
+
+		// Cache server info on first call
+		if ( $cached_result === null ) {
+			$cached_result = mysqli_get_server_info( $this->wpdb->dbh );
+		}
+
+		return $cached_result;
 	}
 
 	/**
@@ -123,6 +130,10 @@ class Ai1wm_Database_Mysqli extends Ai1wm_Database {
 	 * @return array
 	 */
 	public function fetch_assoc( &$result ) {
+		if ( $result === false ) {
+			return false;
+		}
+
 		return mysqli_fetch_assoc( $result );
 	}
 
@@ -133,6 +144,10 @@ class Ai1wm_Database_Mysqli extends Ai1wm_Database {
 	 * @return array
 	 */
 	public function fetch_row( &$result ) {
+		if ( $result === false ) {
+			return false;
+		}
+
 		return mysqli_fetch_row( $result );
 	}
 
@@ -143,6 +158,10 @@ class Ai1wm_Database_Mysqli extends Ai1wm_Database {
 	 * @return integer
 	 */
 	public function num_rows( &$result ) {
+		if ( $result === false ) {
+			return 0;
+		}
+
 		return mysqli_num_rows( $result );
 	}
 
@@ -153,6 +172,10 @@ class Ai1wm_Database_Mysqli extends Ai1wm_Database {
 	 * @return boolean
 	 */
 	public function free_result( &$result ) {
+		if ( $result === false ) {
+			return true;
+		}
+
 		return mysqli_free_result( $result );
 	}
 }

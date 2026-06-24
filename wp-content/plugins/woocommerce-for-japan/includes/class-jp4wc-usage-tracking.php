@@ -10,6 +10,9 @@
  * @package JP4WC\Classes
  */
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Usage tracking requires direct DB queries for statistics; caching is handled per-method via wp_cache_get/wp_cache_set.
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Calls to WooCommerce core hooks (woocommerce_tracker_*, woocommerce_admin_disabled, etc.) that must use their original names.
+
 use Automattic\Jetpack\Constants;
 use Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTableDataStore;
 use Automattic\WooCommerce\Utilities\{ FeaturesUtil, OrderUtil, PluginUtil };
@@ -37,6 +40,32 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		 */
 		public static function init() { // phpcs:ignore WooCommerce.Functions.InternalInjectionMethod.MissingFinal, WooCommerce.Functions.InternalInjectionMethod.MissingInternalTag -- Not an injection.
 			add_action( 'jp4wc_tracker_send_event', array( __CLASS__, 'jp4wc_send_tracking_data' ) );
+			add_action( 'jp4wc_installed', array( __CLASS__, 'send_tracking_on_install' ) );
+			add_action( 'jp4wc_updated', array( __CLASS__, 'send_tracking_on_update' ) );
+		}
+
+		/**
+		 * Send tracking data on plugin installation.
+		 *
+		 * @param string $previous_version Previous version of the plugin.
+		 */
+		public static function send_tracking_on_install( $previous_version ) {
+			// Send tracking data immediately on first install.
+			if ( empty( $previous_version ) ) {
+				self::jp4wc_send_tracking_data( true );
+			}
+		}
+
+		/**
+		 * Send tracking data on plugin update.
+		 *
+		 * @param string $previous_version Previous version of the plugin.
+		 */
+		public static function send_tracking_on_update( $previous_version ) {
+			// Send tracking data on updates.
+			if ( ! empty( $previous_version ) ) {
+				self::jp4wc_send_tracking_data( true );
+			}
 		}
 
 		/**
@@ -56,6 +85,11 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			 * @since 2.3.0
 			 */
 			if ( ! apply_filters( 'jp4wc_tracker_send_override', $override ) ) {
+				// Check if tracking is enabled.
+				if ( 'yes' !== get_option( 'wc4jp-tracking' ) ) {
+					return;
+				}
+
 				// Send a maximum of once per week by default.
 				$last_send = self::get_last_send_time();
 				if ( $last_send && $last_send > apply_filters( 'jp4wc_tracker_last_send_interval', strtotime( '-1 week' ) ) ) { // phpcs:ignore
@@ -72,20 +106,91 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			// Update time first before sending to ensure it is set.
 			update_option( 'jp4wc_tracker_last_send', time() );
 
-			$params = self::get_tracking_data();
-			wp_safe_remote_post(
+			$params   = self::get_tracking_data();
+			$response = wp_safe_remote_post(
 				self::$api_url,
 				array(
 					'method'      => 'POST',
 					'timeout'     => 45,
 					'redirection' => 5,
 					'httpversion' => '1.0',
-					'blocking'    => false,
-					'headers'     => array( 'user-agent' => 'JP4WCTracker/' . md5( esc_url_raw( home_url( '/' ) ) ) . ';' ),
+					'blocking'    => true,
+					'headers'     => array(
+						'user-agent'   => 'JP4WCTracker/' . md5( esc_url_raw( home_url( '/' ) ) ) . ';',
+						'Content-Type' => 'application/json',
+					),
 					'body'        => wp_json_encode( $params ),
 					'cookies'     => array(),
 				)
 			);
+
+			// Check for WP_Error.
+			if ( is_wp_error( $response ) ) {
+				wc_get_logger()->error(
+					'Tracking request failed: ' . $response->get_error_message(),
+					array( 'source' => 'jp4wc-tracker' )
+				);
+				return;
+			}
+
+			// Get HTTP status code.
+			$http_code = wp_remote_retrieve_response_code( $response );
+
+			// Get the response body.
+			$response_body = wp_remote_retrieve_body( $response );
+
+			// Processing branching based on HTTP status code.
+			if ( $http_code >= 200 && $http_code < 300 ) {
+				$decoded_response = json_decode( $response_body, true );
+
+				if ( json_last_error() === JSON_ERROR_NONE ) {
+					$result_array = array(
+						'success'   => true,
+						'data'      => $decoded_response,
+						'http_code' => $http_code,
+					);
+				} else {
+					$result_array = array(
+						'success'   => true,
+						'data'      => $response_body, // Raw response.
+						'http_code' => $http_code,
+						'note'      => 'JSON response expected',
+					);
+				}
+			} elseif ( $http_code >= 400 && $http_code < 500 ) {
+				// Client error (4xx series).
+				wc_get_logger()->error( "Client Error {$http_code}: {$response_body}", array( 'source' => 'jp4wc-tracker' ) );
+
+				$result_array = array(
+					'success'       => false,
+					'error'         => "Client error ({$http_code}): There was a problem with the request",
+					'error_type'    => 'client_error',
+					'http_code'     => $http_code,
+					'response_body' => $response_body,
+				);
+			} elseif ( $http_code >= 500 ) {
+				// Server error (5xx series).
+				wc_get_logger()->error( "Server Error {$http_code}: {$response_body}", array( 'source' => 'jp4wc-tracker' ) );
+
+				$result_array = array(
+					'success'       => false,
+					'error'         => "Server error ({$http_code}): There was a problem on the server side",
+					'error_type'    => 'server_error',
+					'http_code'     => $http_code,
+					'response_body' => $response_body,
+				);
+			} else {
+				// Unexpected HTTP status code.
+				wc_get_logger()->error( "Unexpected HTTP Code {$http_code}: {$response_body}", array( 'source' => 'jp4wc-tracker' ) );
+
+				$result_array = array(
+					'success'       => false,
+					'error'         => "Unexpected response ({$http_code})",
+					'error_type'    => 'unexpected_response',
+					'http_code'     => $http_code,
+					'response_body' => $response_body,
+				);
+			}
 		}
 
 		/**
@@ -430,13 +535,14 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		 * @return array
 		 */
 		private static function get_orders() {
-			$order_dates    = self::get_order_dates();
-			$order_counts   = self::get_order_counts();
-			$order_totals   = self::get_order_totals();
-			$order_gateways = self::get_orders_by_gateway();
-			$order_origin   = self::get_orders_origins();
+			$order_dates      = self::get_order_dates();
+			$order_counts     = self::get_order_counts();
+			$order_totals     = self::get_order_totals();
+			$order_last_month = self::get_last_month_order_totals();
+			$order_gateways   = self::get_orders_by_gateway();
+			$order_origin     = self::get_orders_origins();
 
-			return array_merge( $order_dates, $order_counts, $order_totals, $order_gateways, $order_origin );
+			return array_merge( $order_dates, $order_counts, $order_totals, $order_last_month, $order_gateways, $order_origin );
 		}
 
 		/**
@@ -448,25 +554,26 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		private static function get_order_totals() {
 			global $wpdb;
 
-			$orders_table  = OrdersTableDataStore::get_orders_table_name();
+			$orders_table  = esc_sql( OrdersTableDataStore::get_orders_table_name() );
 			$one_month_ago = date_i18n( 'Y-m-d H:i:s', strtotime( '-1 month' ) );
 
-			// キャッシュキーを定義
+			// Define cache key.
 			$cache_key   = 'wc_orders_gross_total';
 			$cache_group = 'wc_reports';
 
-			// キャッシュからデータを取得してみる
+			// Try to get data from cache.
 			$gross_total = wp_cache_get( $cache_key, $cache_group );
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orders_table is escaped with esc_sql().
 				$gross_total = $wpdb->get_var(
 					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE status in ('wc-completed', 'wc-refunded');
-			"
+					SELECT SUM(total_amount) 
+					AS 'gross_total' 
+					FROM %i
+					WHERE status in ('wc-completed', 'wc-refunded')
+					",
+					$orders_table
 				);
-				// phpcs:enable
 			} else {
 				$gross_total = $wpdb->get_var(
 					"
@@ -487,28 +594,23 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			}
 
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$monthly_gross_total = $wpdb->get_var(
-					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE date_created_gmt > '$one_month_ago'
-                    AND status in ('wc-completed', 'wc-refunded');
-			"
-				);
-				// phpcs:enable
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orders_table is escaped with esc_sql().
+				$monthly_gross_total = $wpdb->get_var( $wpdb->prepare( "SELECT SUM(total_amount) AS 'gross_total' FROM $orders_table WHERE date_created_gmt > %s AND status in ('wc-completed', 'wc-refunded')", $one_month_ago ) );
 			} else {
 				$monthly_gross_total = $wpdb->get_var(
-					"
-					SELECT
-						SUM( order_meta.meta_value ) AS 'gross_total'
-					FROM {$wpdb->prefix}posts AS orders
-					LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
-					WHERE order_meta.meta_key = '_order_total'
-                        AND orders.post_date_gmt > '$one_month_ago'
-                        AND orders.post_status in ( 'wc-completed', 'wc-refunded' )
-					GROUP BY order_meta.meta_key
-				"
+					$wpdb->prepare(
+						"
+						SELECT
+							SUM( order_meta.meta_value ) AS 'gross_total'
+						FROM {$wpdb->prefix}posts AS orders
+						LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+						WHERE order_meta.meta_key = '_order_total'
+							AND orders.post_date_gmt > %s
+							AND orders.post_status in ( 'wc-completed', 'wc-refunded' )
+						GROUP BY order_meta.meta_key
+						",
+						$one_month_ago
+					)
 				);
 			}
 
@@ -517,15 +619,8 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			}
 
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$processing_gross_total = $wpdb->get_var(
-					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE status = 'wc-processing';
-			"
-				);
-				// phpcs:enable
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orders_table is escaped with esc_sql().
+				$processing_gross_total = $wpdb->get_var( "SELECT SUM(total_amount) AS 'gross_total' FROM $orders_table WHERE status = 'wc-processing'" );
 			} else {
 				$processing_gross_total = $wpdb->get_var(
 					"
@@ -545,16 +640,8 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			}
 
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$monthly_processing_gross_total = $wpdb->get_var(
-					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE date_created_gmt > '$one_month_ago'
-                    AND status = 'wc-processing';
-			"
-				);
-				// phpcs:enable
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $orders_table is escaped with esc_sql().
+				$monthly_processing_gross_total = $wpdb->get_var( $wpdb->prepare( "SELECT SUM(total_amount) AS 'gross_total' FROM $orders_table WHERE date_created_gmt > %s AND status = 'wc-processing'", $one_month_ago ) );
 			} else {
 				$monthly_processing_gross_total = $wpdb->get_var(
 					$wpdb->prepare(
@@ -586,40 +673,48 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		}
 
 		/**
-		 * Get order totals.
+		 * Get latest one month order totals.
 		 *
 		 * @since 5.4.0
 		 * @return array
 		 */
-		public static function get_last_month_order_totals() {
+		public static function get_one_month_order_totals() {
 			global $wpdb;
 
-			$orders_table  = OrdersTableDataStore::get_orders_table_name();
+			$orders_table  = esc_sql( OrdersTableDataStore::get_orders_table_name() );
 			$one_month_ago = date_i18n( 'Y-m-d H:i:s', strtotime( '-1 month' ) );
 
 			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$monthly_gross_total = $wpdb->get_var(
-					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE date_created_gmt > '$one_month_ago'
-                    AND status in ('wc-completed', 'wc-refunded');
-			"
+					$wpdb->prepare(
+						"
+						SELECT SUM(total_amount) 
+							AS 'gross_total' 
+						FROM %i
+						WHERE date_created_gmt > %s 
+						AND status in ('wc-completed', 'wc-refunded')
+						",
+						array(
+							$orders_table,
+							$one_month_ago,
+						)
+					)
 				);
-				// phpcs:enable
 			} else {
 				$monthly_gross_total = $wpdb->get_var(
-					"
-					SELECT
-						SUM( order_meta.meta_value ) AS 'gross_total'
-					FROM {$wpdb->prefix}posts AS orders
-					LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
-					WHERE order_meta.meta_key = '_order_total'
-                        AND orders.post_date_gmt > '$one_month_ago'
-                        AND orders.post_status in ( 'wc-completed', 'wc-refunded' )
-					GROUP BY order_meta.meta_key
-				"
+					$wpdb->prepare(
+						"
+						SELECT
+							SUM( order_meta.meta_value ) AS 'gross_total'
+						FROM {$wpdb->prefix}posts AS orders
+						LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+						WHERE order_meta.meta_key = '_order_total'
+							AND orders.post_date_gmt > %s
+							AND orders.post_status in ( 'wc-completed', 'wc-refunded' )
+						GROUP BY order_meta.meta_key
+						",
+						$one_month_ago
+					)
 				);
 			}
 
@@ -627,30 +722,35 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 				$monthly_gross_total = 0;
 			}
 
-			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$monthly_processing_gross_total = $wpdb->get_var(
-					"
-				SELECT SUM(total_amount) AS 'gross_total'
-				FROM $orders_table
-				WHERE date_created_gmt > '$one_month_ago'
-                    AND status = 'wc-processing';
-			"
+			// Define cache key for monthly processing gross total.
+			$cache_key_monthly_processing = 'wc_monthly_processing_gross_total_' . md5( $one_month_ago );
+			$cache_group                  = 'wc_reports';
+
+			// Try to get data from cache.
+			$monthly_processing_gross_total = wp_cache_get( $cache_key_monthly_processing, $cache_group );
+
+			if ( false === $monthly_processing_gross_total ) {
+				// Use WooCommerce data store methods instead of direct database calls.
+				$orders_data_store = WC_Data_Store::load( 'order' );
+				$processing_orders = wc_get_orders(
+					array(
+						'status'       => 'processing',
+						'date_created' => '>' . strtotime( '-1 month' ),
+						'limit'        => -1,
+						'return'       => 'ids',
+					)
 				);
-				// phpcs:enable
-			} else {
-				$monthly_processing_gross_total = $wpdb->get_var(
-					"
-				SELECT
-					SUM( order_meta.meta_value ) AS 'gross_total'
-				FROM {$wpdb->prefix}posts AS orders
-				LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
-				WHERE order_meta.meta_key = '_order_total'
-                    AND orders.post_date_gmt >= '$one_month_ago'
-                    AND orders.post_status = 'wc-processing'
-				GROUP BY order_meta.meta_key
-			"
-				);
+
+				$monthly_processing_gross_total = 0;
+				foreach ( $processing_orders as $order_id ) {
+					$order = wc_get_order( $order_id );
+					if ( $order ) {
+						$monthly_processing_gross_total += $order->get_total();
+					}
+				}
+
+				// Cache the results for 10 minutes.
+				wp_cache_set( $cache_key_monthly_processing, $monthly_processing_gross_total, $cache_group, 600 );
 			}
 
 			if ( is_null( $monthly_processing_gross_total ) ) {
@@ -664,6 +764,98 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		}
 
 		/**
+		 * Get last month order totals.
+		 *
+		 * @return array
+		 */
+		public static function get_last_month_order_totals() {
+			global $wpdb;
+
+			$last_month_start = date_i18n( 'Y-m-d H:i:s', strtotime( 'first day of last month' ) );
+			$last_month_end   = date_i18n( 'Y-m-d H:i:s', strtotime( 'last day of last month' ) );
+			$last_month       = date_i18n( 'Y-m', strtotime( 'first day of last month' ) );
+
+			$last_month_gross_total = 0;
+			$last_month_processing  = 0;
+			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+				$last_month_gross_total = $wpdb->get_var(
+					$wpdb->prepare(
+						"
+						SELECT SUM(total_amount) 
+							AS 'gross_total' 
+						FROM %i
+						WHERE date_created_gmt >= %s 
+						AND date_created_gmt <= %s
+						AND status in ('wc-completed', 'wc-refunded')
+						",
+						array(
+							OrdersTableDataStore::get_orders_table_name(),
+							$last_month_start,
+							$last_month_end,
+						)
+					)
+				);
+				$last_month_processing  = $wpdb->get_var(
+					$wpdb->prepare(
+						"
+						SELECT SUM(total_amount) 
+							AS 'gross_total' 
+						FROM %i
+						WHERE date_created_gmt >= %s 
+						AND date_created_gmt <= %s
+						AND status = 'wc-processing'
+						",
+						array(
+							OrdersTableDataStore::get_orders_table_name(),
+							$last_month_start,
+							$last_month_end,
+						)
+					)
+				);
+			} else {
+				$last_month_gross_total = $wpdb->get_var(
+					$wpdb->prepare(
+						"
+						SELECT
+							SUM( order_meta.meta_value ) AS 'gross_total'
+						FROM {$wpdb->prefix}posts AS orders
+						LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+						WHERE order_meta.meta_key = '_order_total'
+							AND orders.post_date_gmt >= %s
+							AND orders.post_date_gmt <= %s
+							AND orders.post_status in ( 'wc-completed', 'wc-refunded' )
+						GROUP BY order_meta.meta_key
+						",
+						$last_month_start,
+						$last_month_end
+					)
+				);
+				$last_month_processing  = $wpdb->get_var(
+					$wpdb->prepare(
+						"
+						SELECT
+							SUM( order_meta.meta_value ) AS 'gross_total'
+						FROM {$wpdb->prefix}posts AS orders
+						LEFT JOIN {$wpdb->prefix}postmeta AS order_meta ON order_meta.post_id = orders.ID
+						WHERE order_meta.meta_key = '_order_total'
+							AND orders.post_date_gmt >= %s
+							AND orders.post_date_gmt <= %s
+							AND orders.post_status = 'wc-processing'
+						GROUP BY order_meta.meta_key
+						",
+						$last_month_start,
+						$last_month_end
+					)
+				);
+			}
+
+			return array(
+				'last_month'             => $last_month,
+				'last_month_gross_total' => $last_month_gross_total,
+				'last_month_processing'  => $last_month_processing,
+			);
+		}
+		/**
 		 * Get last order date.
 		 *
 		 * @return string
@@ -671,69 +863,93 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		private static function get_order_dates() {
 			global $wpdb;
 
-			$orders_table = OrdersTableDataStore::get_orders_table_name();
-			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$min_max = $wpdb->get_row(
-					"
-				SELECT
-					MIN( date_created_gmt ) as 'first', MAX( date_created_gmt ) as 'last'
-				FROM $orders_table
-				WHERE status = 'wc-completed';
-				",
-					ARRAY_A
-				);
-				// phpcs:enable
-			} else {
-				$min_max = $wpdb->get_row(
-					"
+			// Define cache keys.
+			$cache_key_completed  = 'jp4wc_order_dates_completed';
+			$cache_key_processing = 'jp4wc_order_dates_processing';
+			$cache_group          = 'jp4wc_tracking';
+
+			// Try to get data from cache first.
+			$min_max            = wp_cache_get( $cache_key_completed, $cache_group );
+			$processing_min_max = wp_cache_get( $cache_key_processing, $cache_group );
+
+			if ( false === $min_max ) {
+				$orders_table = OrdersTableDataStore::get_orders_table_name();
+				if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+					// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$min_max = $wpdb->get_row(
+						"
 					SELECT
-						MIN( post_date_gmt ) as 'first', MAX( post_date_gmt ) as 'last'
+						MIN( date_created_gmt ) as 'first', MAX( date_created_gmt ) as 'last'
+					FROM $orders_table
+					WHERE status = 'wc-completed';
+					",
+						ARRAY_A
+					);
+					// phpcs:enable
+				} else {
+					// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$min_max = $wpdb->get_row(
+						"
+						SELECT
+							MIN( post_date_gmt ) as 'first', MAX( post_date_gmt ) as 'last'
+						FROM {$wpdb->prefix}posts
+						WHERE post_type = 'shop_order'
+						AND post_status = 'wc-completed'
+					",
+						ARRAY_A
+					);
+					// phpcs:enable
+				}
+
+				if ( is_null( $min_max ) ) {
+					$min_max = array(
+						'first' => '-',
+						'last'  => '-',
+					);
+				}
+
+				// Cache the results for 1 hour.
+				wp_cache_set( $cache_key_completed, $min_max, $cache_group, HOUR_IN_SECONDS );
+			}
+
+			if ( false === $processing_min_max ) {
+				$orders_table = OrdersTableDataStore::get_orders_table_name();
+				if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+					// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$processing_min_max = $wpdb->get_row(
+						"
+					SELECT
+						MIN( date_created_gmt ) as 'processing_first', MAX( date_created_gmt ) as 'processing_last'
+					FROM $orders_table
+					WHERE status = 'wc-processing';
+					",
+						ARRAY_A
+					);
+					// phpcs:enable
+				} else {
+					// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$processing_min_max = $wpdb->get_row(
+						"
+					SELECT
+						MIN( post_date_gmt ) as 'processing_first', MAX( post_date_gmt ) as 'processing_last'
 					FROM {$wpdb->prefix}posts
 					WHERE post_type = 'shop_order'
-					AND post_status = 'wc-completed'
+					AND post_status = 'wc-processing'
 				",
-					ARRAY_A
-				);
-			}
+						ARRAY_A
+					);
+					// phpcs:enable
+				}
 
-			if ( is_null( $min_max ) ) {
-				$min_max = array(
-					'first' => '-',
-					'last'  => '-',
-				);
-			}
+				if ( is_null( $processing_min_max ) ) {
+					$processing_min_max = array(
+						'processing_first' => '-',
+						'processing_last'  => '-',
+					);
+				}
 
-			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$processing_min_max = $wpdb->get_row(
-					"
-				SELECT
-					MIN( date_created_gmt ) as 'processing_first', MAX( date_created_gmt ) as 'processing_last'
-				FROM $orders_table
-				WHERE status = 'wc-processing';
-				",
-					ARRAY_A
-				);
-				// phpcs:enable
-			} else {
-				$processing_min_max = $wpdb->get_row(
-					"
-				SELECT
-					MIN( post_date_gmt ) as 'processing_first', MAX( post_date_gmt ) as 'processing_last'
-				FROM {$wpdb->prefix}posts
-				WHERE post_type = 'shop_order'
-				AND post_status = 'wc-processing'
-			",
-					ARRAY_A
-				);
-			}
-
-			if ( is_null( $processing_min_max ) ) {
-				$processing_min_max = array(
-					'processing_first' => '-',
-					'processing_last'  => '-',
-				);
+				// Cache the results for 1 hour.
+				wp_cache_set( $cache_key_processing, $processing_min_max, $cache_group, HOUR_IN_SECONDS );
 			}
 
 			return array_merge( $min_max, $processing_min_max );
@@ -811,49 +1027,63 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 			global $wpdb;
 			$three_month_ago = date_i18n( 'Y-m-d H:i:s', strtotime( '-3 month' ) );
 
-			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				$orders_table = OrdersTableDataStore::get_orders_table_name();
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$orders_and_gateway_details = $wpdb->get_results(
-					$wpdb->prepare(
-						"
-						SELECT payment_method AS gateway, currency AS currency, SUM( total_amount ) AS totals, count( id ) AS counts
-						FROM $orders_table
-						WHERE date_created_gmt >= %s
-							AND status IN ( 'wc-completed', 'wc-processing', 'wc-refunded' )
-						GROUP BY gateway, currency;
-						",
-						$three_month_ago
-					)
-				);
-				// phpcs:enable
-			} else {
-				$orders_and_gateway_details = $wpdb->get_results(
-					$wpdb->prepare(
-						"
-						SELECT
-							gateway, currency, SUM(total) AS totals, COUNT(order_id) AS counts
-						FROM (
+			// Define cache key based on the query parameters.
+			$cache_key   = 'jp4wc_orders_by_gateway_' . md5( $three_month_ago );
+			$cache_group = 'jp4wc_tracking';
+
+			// Try to get data from cache first.
+			$orders_and_gateway_details = wp_cache_get( $cache_key, $cache_group );
+
+			if ( false === $orders_and_gateway_details ) {
+				if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+					$orders_table = OrdersTableDataStore::get_orders_table_name();
+					// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$orders_and_gateway_details = $wpdb->get_results(
+						$wpdb->prepare(
+							"
+							SELECT payment_method AS gateway, currency AS currency, SUM( total_amount ) AS totals, count( id ) AS counts
+							FROM $orders_table
+							WHERE date_created_gmt >= %s
+								AND status IN ( 'wc-completed', 'wc-processing', 'wc-refunded' )
+							GROUP BY gateway, currency;
+							",
+							$three_month_ago
+						)
+					);
+					// phpcs:enable
+				} else {
+					// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$orders_and_gateway_details = $wpdb->get_results(
+						$wpdb->prepare(
+							"
 							SELECT
-								orders.id AS order_id,
-								MAX(CASE WHEN meta_key = '_payment_method' THEN meta_value END) gateway,
-								MAX(CASE WHEN meta_key = '_order_total' THEN meta_value END) total,
-								MAX(CASE WHEN meta_key = '_order_currency' THEN meta_value END) currency
-							FROM
-								{$wpdb->prefix}posts orders
-							LEFT JOIN
-								{$wpdb->prefix}postmeta order_meta ON order_meta.post_id = orders.id
-							WHERE orders.post_type = 'shop_order'
-								AND orders.post_date_gmt >= %s
-								AND orders.post_status in ( 'wc-completed', 'wc-processing', 'wc-refunded' )
-								AND meta_key in( '_payment_method','_order_total','_order_currency')
-							GROUP BY orders.id
-						) order_gateways
-						GROUP BY gateway, currency
-						",
-						$three_month_ago
-					)
-				);
+								gateway, currency, SUM(total) AS totals, COUNT(order_id) AS counts
+							FROM (
+								SELECT
+									orders.id AS order_id,
+									MAX(CASE WHEN meta_key = '_payment_method' THEN meta_value END) gateway,
+									MAX(CASE WHEN meta_key = '_order_total' THEN meta_value END) total,
+									MAX(CASE WHEN meta_key = '_order_currency' THEN meta_value END) currency
+								FROM
+									{$wpdb->prefix}posts orders
+								LEFT JOIN
+									{$wpdb->prefix}postmeta order_meta ON order_meta.post_id = orders.id
+								WHERE orders.post_type = 'shop_order'
+									AND orders.post_date_gmt >= %s
+									AND orders.post_status in ( 'wc-completed', 'wc-processing', 'wc-refunded' )
+									AND meta_key in( '_payment_method','_order_total','_order_currency')
+								GROUP BY orders.id
+							) order_gateways
+							GROUP BY gateway, currency
+							",
+							$three_month_ago
+						)
+					);
+					// phpcs:enable
+				}
+
+				// Cache the results for 1 hour.
+				wp_cache_set( $cache_key, $orders_and_gateway_details, $cache_group, HOUR_IN_SECONDS );
 			}
 
 			$orders_by_gateway_currency = array();
@@ -920,32 +1150,46 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		private static function get_orders_origins() {
 			global $wpdb;
 
-			if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
-				$op_table_name = OrdersTableDataStore::get_operational_data_table_name();
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$orders_origin = $wpdb->get_results(
+			// Define cache key.
+			$cache_key   = 'jp4wc_orders_origins';
+			$cache_group = 'jp4wc_tracking';
+
+			// Try to get data from cache first.
+			$orders_origin = wp_cache_get( $cache_key, $cache_group );
+
+			if ( false === $orders_origin ) {
+				if ( OrderUtil::custom_orders_table_usage_is_enabled() ) {
+					$op_table_name = OrdersTableDataStore::get_operational_data_table_name();
+					// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$orders_origin = $wpdb->get_results(
+						"
+					SELECT created_via as origin, COUNT( order_id ) as count
+					FROM $op_table_name
+					GROUP BY created_via;
 					"
-				SELECT created_via as origin, COUNT( order_id ) as count
-				FROM $op_table_name
-				GROUP BY created_via;
+					);
+					// phpcs:enable
+				} else {
+					// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+					$orders_origin = $wpdb->get_results(
+						"
+					SELECT
+						meta_value as origin, COUNT( DISTINCT ( orders.id ) ) as count
+					FROM
+						$wpdb->posts orders
+					LEFT JOIN
+						$wpdb->postmeta order_meta ON order_meta.post_id = orders.id
+					WHERE
+						meta_key = '_created_via'
+					GROUP BY
+						meta_value;
 				"
-				);
-				// phpcs:enable
-			} else {
-				$orders_origin = $wpdb->get_results(
-					"
-				SELECT
-					meta_value as origin, COUNT( DISTINCT ( orders.id ) ) as count
-				FROM
-					$wpdb->posts orders
-				LEFT JOIN
-					$wpdb->postmeta order_meta ON order_meta.post_id = orders.id
-				WHERE
-					meta_key = '_created_via'
-				GROUP BY
-					meta_value;
-			"
-				);
+					);
+					// phpcs:enable
+				}
+
+				// Cache the results for 1 hour.
+				wp_cache_set( $cache_key, $orders_origin, $cache_group, HOUR_IN_SECONDS );
 			}
 
 			// The associative array that is created as the result of array_reduce is passed to extract_group_key()
@@ -996,15 +1240,30 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 				'trash' => 'trash',
 				'spam'  => 'spam',
 			);
-			$counts       = $wpdb->get_results(
-				"
-			SELECT comment_approved, COUNT(*) AS num_reviews
-			FROM {$wpdb->comments}
-			WHERE comment_type = 'review'
-			GROUP BY comment_approved
-			",
-				ARRAY_A
-			);
+
+			// Define cache key.
+			$cache_key   = 'jp4wc_review_counts';
+			$cache_group = 'jp4wc_tracking';
+
+			// Try to get data from cache first.
+			$counts = wp_cache_get( $cache_key, $cache_group );
+
+			if ( false === $counts ) {
+				// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$counts = $wpdb->get_results(
+					"
+				SELECT comment_approved, COUNT(*) AS num_reviews
+				FROM {$wpdb->comments}
+				WHERE comment_type = 'review'
+				GROUP BY comment_approved
+				",
+					ARRAY_A
+				);
+				// phpcs:enable
+
+				// Cache the results for 1 hour.
+				wp_cache_set( $cache_key, $counts, $cache_group, HOUR_IN_SECONDS );
+			}
 
 			if ( ! $counts ) {
 				return $review_count;
@@ -1177,19 +1436,33 @@ if ( class_exists( 'Automattic\WooCommerce\Internal\DataStores\Orders\OrdersTabl
 		public static function post_contains_text( $post_id, $text ) {
 			global $wpdb;
 
-			// Search for the text anywhere in the post.
-			$wildcarded = "%{$text}%";
+			// Define cache key.
+			$cache_key   = 'jp4wc_post_contains_text_' . md5( $post_id . $text );
+			$cache_group = 'jp4wc_tracking';
 
-			$result = $wpdb->get_var(
-				$wpdb->prepare(
-					"
-				SELECT COUNT( * ) FROM {$wpdb->prefix}posts
-				WHERE ID=%d
-				AND {$wpdb->prefix}posts.post_content LIKE %s
-				",
-					array( $post_id, $wildcarded )
-				)
-			);
+			// Try to get data from cache first.
+			$result = wp_cache_get( $cache_key, $cache_group );
+
+			if ( false === $result ) {
+				// Search for the text anywhere in the post.
+				$wildcarded = "%{$text}%";
+
+				// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$result = $wpdb->get_var(
+					$wpdb->prepare(
+						"
+					SELECT COUNT( * ) FROM {$wpdb->prefix}posts
+					WHERE ID=%d
+					AND {$wpdb->prefix}posts.post_content LIKE %s
+					",
+						array( $post_id, $wildcarded )
+					)
+				);
+				// phpcs:enable
+
+				// Cache the results for 1 hour.
+				wp_cache_set( $cache_key, $result, $cache_group, HOUR_IN_SECONDS );
+			}
 
 			return ( '0' !== $result ) ? 'Yes' : 'No';
 		}

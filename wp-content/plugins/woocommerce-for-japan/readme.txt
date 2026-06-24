@@ -2,30 +2,76 @@
 Contributors: artisan-workshop-1, ssec4dev, shohei.tanaka
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=info@artws.info&item_name=Donation+for+Artisan&currency_code=JPY
 Tags: woocommerce, ecommerce, e-commerce, Japanese
-Requires at least: 5.0.0
-Tested up to: 6.8.1
-Stable tag: 2.6.43
+Requires at least: 6.7
+Tested up to: 7.0
+Stable tag: 2.9.14
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-This plugin extends the WooCommerce shop plugin for Japanese situation.
+Essential Japanese localization toolkit for WooCommerce - adds address formats, payment methods, delivery scheduling, and legal compliance.
 
 == Description ==
 
-This plugin is an additional feature plugin that makes WooCommerce easier to use in Japan. It is not essential when using it in Japan (Japanese environment).
+Japanized for WooCommerce is the essential toolkit for running a WooCommerce store in Japan. This plugin bridges the gap between WooCommerce's global features and Japan's unique e-commerce requirements.
+
+**Why You Need This Plugin**
+
+Running an online store in Japan requires specific features that standard WooCommerce doesn't provide out of the box:
+* Japanese address formats with proper field ordering (postal code, prefecture, city, address lines)
+* Name reading fields (Yomigana/Furigana) for accurate customer identification
+* Delivery date and time selection that customers expect
+* Popular Japanese payment methods like bank transfer and COD
+* Legal compliance with Japan's Specified Commercial Transaction Act (特定商取引法)
+
+**Who Should Use This**
+
+This plugin is designed for:
+* Japanese e-commerce businesses using WooCommerce
+* International stores shipping to Japanese customers
+* Anyone who needs Japanese address handling and payment methods
+* Stores requiring delivery date/time selection functionality
+
+**Seamless Integration**
+
+Works smoothly with WooCommerce core features and popular extensions. Fully compatible with the new WooCommerce Blocks checkout experience. All features are optional - enable only what you need for your store.
 
 = Key Features =
 
-1. Added a name reading input item
-2. Add honorific title (sama) after the name
-3. Automatic postal code entry function (Yahoo! application ID required)
-4. Hidden function at the time of free shipping
-5. Delivery date and time setting (including holiday setting)
-6. Addition of payment methods (bank transfer, postal transfer, over-the-counter payment, cash on delivery subscription)
-7. Addition of official postpaid payment Paidy for Japanized for WooCommerce
-8. Addition of PayPal Checkout (compatible with Japan)
-9. Creation of Specified Commercial Transactions Law and setting of short code
-* 7-8 payments are also distributed as individual payment plug-ins.
+**Address & Name Management**
+* Name reading (Yomigana/Furigana) input fields for billing and shipping addresses
+* Honorific title (様/sama) automatically added after customer names
+* Japanese-style address format with proper field ordering
+* Auto-fill address from postal code using Yahoo! API integration
+* Company name field support
+
+**Shipping & Delivery**
+* Delivery date and time selection at checkout
+* Delivery time slot management
+* Holiday and non-delivery day settings
+* Weekend and specific date exclusions
+* Delivery-related fields hidden when free shipping is applied
+
+**Payment Methods**
+* Bank Transfer (Japanese banks)
+* Japan Post Bank Transfer
+* Cash on Delivery (COD) with fee calculation
+* COD subscription support
+* Pay at Store (over-the-counter payment)
+* Paidy (Buy Now, Pay Later) - Official Japanese payment gateway
+
+**Legal & Compliance**
+* Specified Commercial Transaction Act (特定商取引法) page creator
+* Shortcode support for legal information display
+* Customizable legal notice templates
+
+**Additional Features**
+* Email template optimization for Japanese format
+* Address validation for Japanese postal codes
+* Affiliate integration (A8.net, Access Trade, Value Commerce)
+* WooCommerce Blocks compatibility
+* Security scanning and malware detection
+
+Note: Paidy Checkout are also available as standalone payment plugins.
 
 [youtube https://www.youtube.com/watch?v=mPYlDDuGzis]
 
@@ -33,9 +79,9 @@ This plugin is an additional feature plugin that makes WooCommerce easier to use
 
 = Minimum Requirements =
 
-* WordPress 5.0 or greater
-* WooCommerce 4.0 or greater
-* PHP version 7.3 or greater
+* WordPress 6.0 or greater
+* WooCommerce 8.0 or greater
+* PHP version 8.3 or greater
 * MySQL version 5.6 or greater
 * WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
@@ -50,136 +96,151 @@ The manual installation method involves downloading and uploading our plugin to 
 
 == Screenshots ==
 
-1. Billing Address Input Form
-2. Admin Panel Payment Gateways
-3. Admin Panel WooCommerce for Japan Setting Screen for Address Form.
-4. Admin Panel WooCommerce for Japan Setting Screen for Shipping date.
-5. Admin Panel WooCommerce for Japan Setting Screen for Payment.
+1. General Settings - Configure name reading (Yomigana) fields, address display options, honorific titles, and usage tracking preferences.
+2. Shipment Settings - Set up delivery date designation, delivery time zones, holidays, and shipping notification options.
+3. Payment Settings - Enable and configure Japanese payment methods including bank transfer, postal transfer, pay at store, and extra charge settings.
+4. Law Settings - Configure Specified Commercial Transaction Law (特定商取引法) information including shop name, company details, owner information, and legal notices.
+5. Affiliate Settings - Set up affiliate tracking for Japanese affiliate networks including A8.net, Felmat (ValueCommerce), and Access Trade.
+6. Checkout Block - WooCommerce Blocks checkout page displaying Japanese address format, name reading fields, and delivery date/time selection.
+7. Classic Checkout - Traditional WooCommerce checkout page with Japanese localization features including address fields and delivery options.
+
+== Frequently Asked Questions ==
+
+= Do I need this plugin to use WooCommerce in Japan? =
+
+While WooCommerce can work in Japan without this plugin, Japanized for WooCommerce provides essential features that Japanese customers expect, such as delivery date selection, name reading fields (Yomigana), and local payment methods. It significantly improves the user experience for Japanese e-commerce.
+
+= Does this plugin work with WooCommerce Blocks? =
+
+Yes! Version 2.8.0 and later fully supports the new WooCommerce Blocks checkout experience, including delivery date selection and custom address fields.
+
+= How do I enable the postal code auto-fill feature? =
+
+You need to obtain a free Yahoo! Japan Application ID from the Yahoo! Developer Network. Once you have the ID, enter it in the WooCommerce → Settings → Japan Settings → Address Form section.(Classic Checkout only)
+
+= Which payment methods are included? =
+
+The plugin includes: Bank Transfer (Japanese banks), Japan Post Bank Transfer, Cash on Delivery (COD) with fee calculation, Pay at Store, Paidy (Buy Now, Pay Later), and PayPal Checkout optimized for Japan. Paidy and PayPal are also available as standalone plugins.
+
+= Can I use only specific features and disable others? =
+
+Yes, absolutely! All features are modular and can be enabled or disabled individually from the plugin settings. You only need to activate the features your store requires.
+
+= Is the plugin compatible with multilingual sites? =
+
+Yes, the plugin is compatible with WPML and other multilingual plugins. It automatically detects the language and adjusts features accordingly. Japanese-specific features are only applied when the site language is set to Japanese.
+
+= How do I set up delivery date and time selection? =
+
+Go to WooCommerce → Settings → Japan Settings → Delivery Date. You can configure available delivery times, set holidays, exclude specific days of the week, and customize the delivery date display format.
+
+= Does this plugin modify WooCommerce core files? =
+
+No, the plugin uses WordPress and WooCommerce hooks and filters. It doesn't modify any core files, making it safe to use and easy to update.
+
+= Where can I get support? =
+
+For support, please visit the [plugin support forum](https://wordpress.org/support/plugin/woocommerce-for-japan/) on WordPress.org or check the [official documentation](https://wc.artws.info/).
+
+= Is this plugin free? =
+
+Yes, Japanized for WooCommerce is completely free and open source under the GPLv3 license.
 
 == Changelog ==
 
-= 2.6.43 - 2025-05-23 =
-* Fixed - Preview Email Bugs.
+= 2.9.14 - 2026-06-22 =
+* **Fixed** - Paidy payment verification was always failing (HTTP 404) because the gateway incorrectly used POST for `GET /payments/{id}`; switched to `wp_safe_remote_get()` so payment status checks now succeed and order completion is unblocked
+* **Security** - `payment_id` parameter is now validated against the Paidy format (`pay_[A-Za-z0-9_]+`) and `rawurlencode()`-escaped before being interpolated into the API URL, preventing path/query injection from buyer-controllable transaction IDs
+* **Fixed** - Paidy payment_id regex was too strict (rejected underscores); updated to `pay_[A-Za-z0-9_]+` to match actual Paidy IDs such as `pay_aii8_kYAAEYA2BDW`
 
-= 2.6.42 - 2025-05-07 =
-* Fixed - Cross Site Request Forgery (CSRF) vulnerability.
+= 2.9.13 - 2026-05-27 =
+* **Security** - Fixed Broken Access Control (CVSS 6.5) in Paidy payment gateway REST endpoints: `paidy-receiver/v1/receive` now enforces a one-time per-session state token (stored as a per-token transient keyed by the 32-char value itself so parallel sessions cannot clobber each other); `paidy/v1/order` and `paidy/v1/check` now require either HMAC signature verification or an IP allowlist — the previous unconditional `return true` fallback has been removed
+* **Security** - State token parameter is validated for type and format (32-char alphanumeric) before use as a transient key suffix to prevent non-string or oversized inputs on the unauthenticated receiver endpoint
+* **Security** - State transient is consumed only after the handler completes successfully so transient DB / decryption failures do not permanently prevent retrying the onboarding callback; orphaned transients are cleaned up when `wp_remote_post()` fails
+* **Fixed** - WP_Error messages for base64 and AES-256-CBC decryption failures in the Paidy receiver are now translatable via `__()` / `sprintf()` with a `%s` field-name placeholder
+* **Fixed** - Missing Paidy API key fields (absent from the intermediary POST) are now merged into `$filtered_params` as empty strings so downstream code can access all four key fields unconditionally without undefined-index notices
 
-= 2.6.40 - 2025-04-28 =
-* Fixed - Class JP4WC_Usage_Tracking Bugs
-* Updated - Updated warning text.
+= 2.9.12 - 2026-05-21 =
+* **Fixed** - Yomigana (reading) fields duplicated on My Account address edit form when block checkout is active; `woocommerce_address_to_edit` filter now removes `_wc_{type}/jp4wc/yomigana_*` duplicates when traditional `{type}_yomigana_*` fields are already present (classic checkout), and suppresses traditional fields when only WC Additional Fields API keys are registered (block checkout)
+* **Fixed** - Yomigana rows duplicated on My Account Addresses view page (`/my-account/?edit-address`) for both classic and block checkout; WC Additional Fields API `render_address_fields` callback is now removed before it fires when JP4WC yomigana is enabled, eliminating the extra "Last Name ( Yomigana )" label rows
+* **Fixed** - My Account Addresses view page did not display yomigana for block checkout users whose data is stored only in `_wc_billing/jp4wc/yomigana_*` meta keys; `formatted_address()` now reads both classic (`{type}_yomigana_*`) and block (`_wc_{type}/jp4wc/yomigana_*`) meta keys, selecting the set that matches the active checkout type
+* **Fixed** - `{last_name}`, `{first_name}`, and `{yomigana_*}` placeholders appeared as literal text in the Block Checkout address summary; address format filter now correctly handles block checkout context
+* **Changed** - Removed unused PayPal Express Checkout (`ppec_paypal`) compatibility code that referenced a decommissioned gateway
 
-= 2.6.39 - 2025-04-24 =
-* Fixed - Company input bug.
-* Fixed - Class JP4WC_Usage_Tracking Bugs
-* Updated - PHP Version check.
-* Updated - Security Notice.
+= 2.9.11 - 2026-05-11 =
+* **Fixed** - Fatal error in `jp4wc_delivery_check_data()` on Classic Checkout with Square / Amazon Pay; `woocommerce_payment_successful_result` was registered with 1 argument so `$result['order_id']` was undefined when gateways omit it — `wc_get_order(null)` returned false, causing a PHP Fatal Error on `$order->get_meta()` and corrupting the AJAX redirect to the Thank You page; filter now accepts 2 arguments and `$order_id` arrives as the second parameter; added early-return guard when `wc_get_order()` returns false (Closes #166)
+* **Fixed** - Yomigana (reading) fields no longer appeared in order emails after 2.9.10; restored accidentally removed `woocommerce_localisation_address_formats` filter registration that injects `{yomigana_last_name}` / `{yomigana_first_name}` placeholders into the JP address format template
+* **Changed** - "NOT registered" delivery log messages changed from `log_info` to `log_debug` (WP_DEBUG only) to stop a 2 MB/day log flood on sites with delivery date disabled
+* **Changed** - Removed unused `display_admin_order_meta()` method in `JP4WC_Delivery` that was never registered to any hook (dead code since introduction)
 
-= 2.6.36 - 2025-04-15 =
-* Fixed - Delivery date culcuration.
-* Fixed - PayPal Plugin confriction.
-* Fixed - Fixed a bug COD js code at Checkout Block.
+= 2.9.10 - 2026-04-27 =
+* **Security** - `jp4wc_hide_notices()` now requires `manage_woocommerce` capability before processing notice-dismissal requests
+* **Fixed** - Admin order edit page displayed 名|姓 instead of 姓|名; CSS overrides now swap float directions for first/last name fields to restore the correct Japanese display order
+* **Fixed** - Admin order address field CSS was not applied on HPOS screens; enqueue now covers all screen ID variants including `admin_page_wc-orders` and uses a `$_GET['page']` fallback for early-init cases
+* **Fixed** - JP4WC admin CSS was overridden by WooCommerce's cascade; inline styles are now attached directly after `woocommerce_admin_styles` at `admin_enqueue_scripts` priority 20 to guarantee the overrides take effect
+* **Improved** - Admin address field ordering rewritten with an order-list approach that preserves fields injected by third-party plugins and guards against yomigana field duplication
+* **Improved** - Admin settings panel: Classic Checkout settings (Company name, Zip auto-entry, Free shipping display) grouped under a dedicated section; added PRO notice for Block Checkout zip auto-entry
+* **Changed** - Removed unused `woocommerce_billing_fields`/`woocommerce_shipping_fields` filter and streamlined yomigana field handling in address replacements
 
-= 2.6.35 - 2025-03-16 =
-* Fixed - Fixed a bug where address display.
+= 2.9.9 - 2026-04-23 =
+* **Fixed** - COD fee not applied in Classic Checkout (Shortcode) or Block Checkout because `jp4wc_calculate_order_totals` read from `woocommerce_cod_settings` while the JP4WC admin UI saves to `wc4jp-extra_charge_*` options; settings are now merged at runtime with JP4WC values taking precedence
+* **Fixed** - `extra_charge_calc_taxes` mismatch: React admin UI stored `yes`/`no` but PHP expected `no-tax`/`tax-excl`/`tax-incl`; legacy values are now normalised on read and the admin UI updated to a 3-way select
+* **Fixed** - Stale `jp4wc_gateway_id` session value could cause COD fee to be silently skipped in Classic Checkout (double session-check removed; gateway ID resolved once and passed through the entire calculation)
+* **Improved** - Block Checkout fee script now uses exponential back-off retry (100 ms → 10 s) instead of fixed 1500 ms / 3000 ms timeouts to wait for `wc/store/payment` store readiness
+* **Added** - PRO-ready filter hooks for COD fee: `jp4wc_cod_fee_settings`, `jp4wc_cod_fee_name`, `jp4wc_cod_fee_amount`, `jp4wc_cod_fee_is_applicable`, `jp4wc_cod_fee_tax_class` (all `@since 2.9.8`)
+* **Changed** - Minimum required PHP version raised from 8.1 to 8.3
 
-= 2.6.33 - 2025-03-14 =
-* Fixed - Fixed a bug where the company name was not displayed.
-* Fixed - Security Check Function to check external files.
+= 2.9.6 - 2026-04-22 =
+* **Fixed** - Paidy webhook permission check rejected all notifications from Paidy (no `x-paidy-signature` header) causing orders to remain "pending" and be auto-cancelled
+* **Fixed** - Paidy webhook signature verification used wrong option name `secret_key` (non-existent); corrected to `api_secret_key` / `test_api_secret_key` based on test mode
+* **Fixed** - Bank transfer (`bankjp`) account skip condition `! isset( $account_names[$i] )` was always false; replaced with `empty( $bank_names[$i] ) && empty( $name )` to properly skip blank rows
+* **Added** - Deduplication of bank transfer account entries on save and load to prevent double display caused by corrupted option data
+* **Fixed** - Yomigana (読み仮名) fields not displayed in HTML emails when using Block Checkout; corrected meta key fallback from `_wc_other/` to `_wc_billing/` and `_wc_shipping/` prefixes
+* **Fixed** - Yomigana displayed twice on order received (thank-you) page when using Block Checkout
+* **Fixed** - Yomigana appearing as a separate bold `<strong>` list below the formatted address in emails and thank-you page; now suppressed via `show_in_order_confirmation: false` and block render filter
+* **Fixed** - "(よみがなを確認するには「編集」をクリックしてください。)" message incorrectly appearing in new order emails
+* **Fixed** - Customer email salutation showing first name only instead of full name (姓名); email context detection now uses `WC_Email::$sending` flag for reliability with WC 10.7+ BlockEmailRenderer
+* **Added** - Country is hidden from formatted address in emails and thank-you page when the store sells to only one country
 
-= 2.6.32 - 2025-03-13 =
-* Add - Security Check page for Japanese Credit Card Security Guide line.
+= 2.9.5 - 2026-04-20 =
+* **Fixed** - White screen on frontend caused by fatal error in Paidy blocks support when gateway is not registered
+* **Fixed** - `WC_Gateway_Paidy not found` fatal error on admin pages when WooCommerce is installed with a non-standard path (e.g. wp-env)
+* **Fixed** - `jp4wc_has_orders_in_last_5_days` undefined function error caused by `is_woocommerce_active()` returning false in non-standard install paths
+* **Fixed** - Google Calendar consultation button not displaying on some hosting environments (Xserver) due to CSP/WAF blocking external script injection; replaced with a plain link
+* **Added** - `jp4wc_allowed_setting_keys` filter to allow add-on plugins to register their own setting keys with the REST API
+* **Added** - `jp4wc_setting_option_map` filter to allow add-on plugins to map REST keys to their existing WordPress option names
+* **Added** - `jp4wc.settings.tabs` and `jp4wc.settings.tabContent` JS filters via `@wordpress/hooks` to allow add-on plugins to inject tabs into the React settings UI
 
-= 2.6.26 & 2.6.27 - 2025-03-03 =
-* Fixed - Address Fields at checkout block bug fixed.
-* Add - Security notice change words and bug fixed.
+= 2.9.0 & 2.9.4 - 2026-03-19 =
+* **Fixed** - COD fee not calculating in Classic Checkout due to `is_admin()` returning true for admin-ajax.php requests
+* **Fixed** - COD fee showing for non-COD payment methods in Classic Checkout (stale session value)
+* **Fixed** - COD fee incorrectly displayed on cart page (now checkout-only)
+* **Fixed** - Delivery date/time fields not appearing in Checkout Block (changed `class_exists` to `interface_exists` for IntegrationInterface)
+* **Fixed** - Delivery select placeholder showing WooCommerce auto-generated text instead of admin-configured label
+* **Fixed** - Paidy order completion hook firing multiple times (added `paidy_capture_id` guard)
+* **Fixed** - `_load_textdomain_just_in_time` warning in WordPress 6.7+ by deferring translations to after `init`
+* **Fixed** - `JP4WC_Framework` config strings now lazy-loaded at `init` priority 2 to prevent early textdomain calls
+* **Fixed** - `WC_Paidy_Endpoint` instantiation deferred to `init` priority 11 to prevent early `WC_Gateway_Paidy` construction
+* **Removed** - PayPal settings removed from admin settings UI and API
 
-= 2.6.24 - 2025-02-26 =
-* Fixed - Address Fields at checkout block bug fixed.
-* Fixed - Cod bug fixed.
-* Add - Security notice change words.
+= Earlier versions =
 
-= 2.6.23 - 2025-02-21 =
-* Fixed - Address Fields at checkout block bug fixed.
-* Fixed - Cod bug fixed.
-
-= 2.6.22 - 2025-02-20 =
-* Add - Supports checkout block for cash on delivery calculation.
-* Fixed - Address Fields bug fixed.
-* Fixed - Some code has been adapted to the official WordPress coding standards.
-
-= 2.6.21 - 2025-02-19 =
-* Add - Credit Card Security list notice.
-* Fixed - JP4WC_Usage_Tracking bugs.
-* Fixed - Some code has been adapted to the official WordPress coding standards.
-* Change - Delete LINE PAY functions.
-
-= 2.6.17 - 2024-08-06 =
-* Change - Add LINE PAY End notice.
-
-= 2.6.16 - 2024-07-16 =
-*Fixed -fatal error at php file rquired. 
-
-= 2.6.15 - 2024-07-11 =
-* Fixed - Fixed PHP warning bug on multisite.
-* Fixed - Error handling in older WC versions.
-* Tweak - Bank and postal transfer processing.
-* Dev - Change in display position of bank transfer and postal transfer.
-
-= 2.6.14 - 2024-05-15 =
-* Fixed - Coupon bugs for Paidy Payment.
-
-= 2.6.13 - 2024-05-10 =
-* Fixed - Coupon bugs for Paidy Payment.
-
-= 2.6.12 - 2024-05-09 =
-* Dev - Warning display for PHP version sites whose support has expired.
-* Fixed - Some bugs for AtStore Payment gateway.
-
-= 2.6.11 - 2024-05-01 =
-* Fixed - Some bugs for some Payment gateway.
-
-= 2.6.10 - 2024-02-05 =
-* Fixed - Some bugs for notice.
-
-= 2.6.9 - 2024-01-26 =
-* Dev - Compatible checkout block for Paidy payments.
-
-= 2.6.8 - 2024-01-23 =
-* Dev - Compatible checkout block for at-store, bank-jp, postal office bank payments.
-
-= 2.6.7 - 2024-01-19 =
-* Fixed - Payment gateway warnign bugs.
-* Dev - Add JP4WC Tracker
-
-= 2.6.6 - 2023-11-28 =
-* Fixed - Update order on-hold email template.
-
-= 2.6.5 - 2023-10-27 =
-* Fixed - Input postalcode for iPhone behavior.
-* Dev - Remove peachPay plugin
-
-= 2.6.4 - 2023-09-26 =
-* Fixed - The bug of New Order at Admin.
-* Fixed - the label CSS at delivery time and date.
-* Fixed - Yahoo! API endpoint bug.
-
-= 2.6.1 & 2.6.2 & 2.6.3 - 2023-08-10 =
-* Fixed - The bug of display shipping phone at email.
-* Fixed - Order post meta display bug for shipping date and term.
-
-= 2.6.0 - 2023-08-03 =
-* Update - Compatible HPOS
-* Update - Changed the required version of WooCommerce to 6.0 or higher.
-* Fixed - Some bugs
-
-[more older](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
+[View complete changelog](https://wc.artws.info/doc/detail-woocommerce-for-japan/wc4jp-change-log/)
 
 == Upgrade Notice ==
 
+= 2.9 =
+2.9 is a minor update, but delete PayPal Payment Gateway. Make a full site backup, update your theme and extensions.
+There is no change in the database saved by this plugin.
+
+= 2.8 =
+2.8 is a minor update, but change the setting page to block. Make a full site backup, update your theme and extensions.
+There is no change in the database saved by this plugin.
+
 = 2.1 =
 2.1 is a minor update, but add Paidy payment method. Make a full site backup, update your theme and extensions.
-There is no change in the database saved by this plug-in.
+There is no change in the database saved by this plugin.
 
 = 2.0 =
 2.0 is a major update. Make a full site backup, update your theme and extensions.
-There is no change in the database saved by this plug-in.
+There is no change in the database saved by this plugin.

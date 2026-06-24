@@ -440,6 +440,17 @@ function bridge_classic_and_block_yomigana($user_id, $address_type) {
     }
 }
 
+// 住所帳カードのタイトルを番地から氏名に変更
+add_filter('crosspeak_address_book_address_header', 'set_address_book_header_to_name', 10, 2);
+function set_address_book_header_to_name($header, $address) {
+    $last_name  = !empty($address['last_name']) ? $address['last_name'] : '';
+    $first_name = !empty($address['first_name']) ? $address['first_name'] : '';
+    if ($last_name || $first_name) {
+        return trim($last_name . ' ' . $first_name);
+    }
+    return $header;
+}
+
 // 住所ページの英語文字列を日本語化
 add_filter('woocommerce_account_menu_items', 'rename_addresses_menu_item');
 function rename_addresses_menu_item($items) {

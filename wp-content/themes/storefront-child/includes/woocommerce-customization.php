@@ -440,6 +440,15 @@ function bridge_classic_and_block_yomigana($user_id, $address_type) {
     }
 }
 
+// ログインエラーメッセージをメールアドレスではなく電話番号向けに変更
+add_filter('gettext', 'customize_login_username_error', 20, 3);
+function customize_login_username_error($translated_text, $text, $domain) {
+    if ($text === '<strong>Error:</strong> The username <strong>%s</strong> is not registered on this site. If you are unsure of your username, try your email address instead.') {
+        return '<strong>エラー:</strong> 電話番号 <strong>%s</strong> はこのサイトに登録されていません。担当者へお問い合わせください。';
+    }
+    return $translated_text;
+}
+
 // 住所帳カードのタイトルを番地から氏名に変更
 add_filter('crosspeak_address_book_address_header', 'set_address_book_header_to_name', 10, 2);
 function set_address_book_header_to_name($header, $address) {

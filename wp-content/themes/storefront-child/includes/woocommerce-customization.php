@@ -397,7 +397,35 @@ function customize_paypay_description($description, $payment_id) {
     return $description;
 }
 
-https://meet.google.com/eku-frfe-ajs
+// 住所ページの英語文字列を日本語化
+add_filter('woocommerce_account_menu_items', 'rename_addresses_menu_item');
+function rename_addresses_menu_item($items) {
+    if (isset($items['edit-address'])) {
+        $items['edit-address'] = '住所一覧';
+    }
+    return $items;
+}
+
+add_filter('gettext', 'translate_address_book_strings', 20, 3);
+function translate_address_book_strings($translated_text, $text, $domain) {
+    if ($domain !== 'woocommerce' && $domain !== 'woo-address-book') {
+        return $translated_text;
+    }
+    switch (trim($text)) {
+        case 'Address book':
+            return '住所一覧';
+        case 'The following billing addresses are available during the checkout process.':
+            return 'お送り主住所として使用できます。';
+        case 'The following shipping addresses are available during the checkout process.':
+            return 'お届け先住所として使用できます。';
+        case 'Set as Default':
+            return 'デフォルトに設定';
+        case 'Default':
+            return 'デフォルト';
+    }
+    return $translated_text;
+}
+
 // 商品の最大数量を10に制限
 add_filter('woocommerce_quantity_input_args', 'limit_quantity_to_max_10', 10, 2);
 function limit_quantity_to_max_10($args, $product) {

@@ -397,6 +397,49 @@ function customize_paypay_description($description, $payment_id) {
     return $description;
 }
 
+// マイアカウント住所編集時のよみがな競合バグ修正
+// jp4wcがよみがなをクラシック(billing_yomigana_*)とブロック(_wc_billing/jp4wc/yomigana_*)の
+// 両方で登録するため、住所編集フォームで競合が起きる問題を修正する
+
+// 1. ブロック形式のよみがなフィールドを住所編集フォームから確実に除去する
+add_filter('woocommerce_address_to_edit', 'remove_block_yomigana_from_address_edit', 100, 2);
+function remove_block_yomigana_from_address_edit($address, $address_type) {
+    $keys = array(
+        '_wc_billing/jp4wc/yomigana_last_name',
+        '_wc_billing/jp4wc/yomigana_first_name',
+        '_wc_shipping/jp4wc/yomigana_last_name',
+        '_wc_shipping/jp4wc/yomigana_first_name',
+    );
+    foreach ($keys as $key) {
+        unset($address[$key]);
+    }
+    return $address;
+}
+
+// 2. woo-address-book保存時にクラシック⇔ブロック形式よみがなを相互補完する
+//    CheckoutFieldsFrontend（priority 10）がブロック形式でPOSTを検索するため、
+//    priority 9で事前にクラシック形式の値をブロック形式にコピーしてエラーを防ぐ
+add_action('woocommerce_customer_save_address', 'bridge_classic_and_block_yomigana', 9, 2);
+function bridge_classic_and_block_yomigana($user_id, $address_type) {
+    $classic_last  = $address_type . '_yomigana_last_name';
+    $classic_first = $address_type . '_yomigana_first_name';
+    $block_last    = '_wc_' . $address_type . '/jp4wc/yomigana_last_name';
+    $block_first   = '_wc_' . $address_type . '/jp4wc/yomigana_first_name';
+
+    if (empty($_POST[$block_last])) {
+        $_POST[$block_last] = $_POST[$classic_last] ?? '';
+    }
+    if (empty($_POST[$block_first])) {
+        $_POST[$block_first] = $_POST[$classic_first] ?? '';
+    }
+    if (empty($_POST[$classic_last])) {
+        $_POST[$classic_last] = $_POST[$block_last] ?? '';
+    }
+    if (empty($_POST[$classic_first])) {
+        $_POST[$classic_first] = $_POST[$block_first] ?? '';
+    }
+}
+
 // 住所ページの英語文字列を日本語化
 add_filter('woocommerce_account_menu_items', 'rename_addresses_menu_item');
 function rename_addresses_menu_item($items) {

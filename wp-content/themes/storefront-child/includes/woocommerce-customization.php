@@ -485,6 +485,10 @@ function translate_address_book_strings($translated_text, $text, $domain) {
             return 'デフォルトに設定';
         case 'Default':
             return 'デフォルト';
+        case 'Default address updated successfully.':
+            return 'デフォルトの住所を更新しました。';
+        case 'The following addresses will be used on the checkout page by default.':
+            return '以下の住所が購入手続きページに入力された状態で表示されます。';
     }
     return $translated_text;
 }

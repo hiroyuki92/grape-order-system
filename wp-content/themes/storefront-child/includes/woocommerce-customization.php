@@ -530,6 +530,9 @@ function translate_address_book_strings($translated_text, $text, $domain) {
     return $translated_text;
 }
 
+// カート・チェックアウトの商品名リンクを削除（商品詳細ページが存在しないため）
+add_filter('woocommerce_cart_item_permalink', '__return_empty_string');
+
 // 商品の最大数量を10に制限
 add_filter('woocommerce_quantity_input_args', 'limit_quantity_to_max_10', 10, 2);
 function limit_quantity_to_max_10($args, $product) {

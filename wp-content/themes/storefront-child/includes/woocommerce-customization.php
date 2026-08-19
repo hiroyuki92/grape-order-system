@@ -536,6 +536,18 @@ add_filter('woocommerce_cart_item_permalink', '__return_empty_string');
 // 注文完了・注文詳細・マイアカウントの注文履歴の商品名リンクも削除
 add_filter('woocommerce_order_item_permalink', '__return_empty_string');
 
+// マイアカウント「注文」ページの「メールアドレスを確認してください」通知を無効化
+// （電話番号ベースの会員登録のためメールアドレス確認機能は使用しない）
+add_action('init', 'disable_woocommerce_email_verification_prompt', 20);
+function disable_woocommerce_email_verification_prompt() {
+    if (!function_exists('wc_get_container') || !class_exists('Automattic\WooCommerce\Internal\CustomerEmailVerification\VerificationController')) {
+        return;
+    }
+    $controller = wc_get_container()->get(\Automattic\WooCommerce\Internal\CustomerEmailVerification\VerificationController::class);
+    remove_action('woocommerce_before_account_orders', array($controller, 'render_prompt'));
+    remove_action('woocommerce_before_account_orders', array($controller, 'print_result_notice'), 5);
+}
+
 // 商品の最大数量を10に制限
 add_filter('woocommerce_quantity_input_args', 'limit_quantity_to_max_10', 10, 2);
 function limit_quantity_to_max_10($args, $product) {

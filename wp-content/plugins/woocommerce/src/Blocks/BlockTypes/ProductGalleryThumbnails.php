@@ -10,28 +10,15 @@ use Automattic\WooCommerce\Blocks\Utils\ProductGalleryUtils;
  * ProductGalleryThumbnails class.
  */
 class ProductGalleryThumbnails extends AbstractBlock {
+
+	use EnableBlockJsonAssetsTrait;
+
 	/**
 	 * Block name.
 	 *
 	 * @var string
 	 */
 	protected $block_name = 'product-gallery-thumbnails';
-
-	/**
-	 * It isn't necessary register block assets because it is a server side block.
-	 */
-	protected function register_block_type_assets() {
-		return null;
-	}
-
-	/**
-	 * Get the frontend style handle for this block type.
-	 *
-	 * @return null
-	 */
-	protected function get_block_type_style() {
-		return null;
-	}
 
 	/**
 	 *  Register the context
@@ -78,24 +65,26 @@ class ProductGalleryThumbnails extends AbstractBlock {
 			return '';
 		}
 
-		$thumbnail_size   = str_replace( '%', '', $attributes['thumbnailSize'] ?? '25%' );
-		$thumbnails_class = 'wc-block-product-gallery-thumbnails--thumbnails-size-' . $thumbnail_size;
+		$thumbnail_size         = str_replace( '%', '', $attributes['thumbnailSize'] ?? '25%' );
+		$active_thumbnail_style = $attributes['activeThumbnailStyle'] ?? 'overlay';
 
 		$img_class = 'wc-block-product-gallery-thumbnails__thumbnail__image';
 
 		ob_start();
 		?>
 		<div
-			class="wc-block-product-gallery-thumbnails <?php echo esc_attr( $classes_and_styles['classes'] . ' ' . $thumbnails_class ); ?>"
-			style="<?php echo esc_attr( $classes_and_styles['styles'] ); ?>"
+			class="wc-block-product-gallery-thumbnails wc-block-product-gallery-thumbnails--active-<?php echo esc_attr( $active_thumbnail_style ); ?> <?php echo esc_attr( $classes_and_styles['classes'] ); ?>"
+			style="<?php echo '--wc-block-product-gallery-thumbnails-size:' . absint( $thumbnail_size ) . ';' . esc_attr( $classes_and_styles['styles'] ); ?>"
 			data-wp-interactive="woocommerce/product-gallery"
+			data-wp-bind--hidden="context.hideNextPreviousButtons"
 			data-wp-class--wc-block-product-gallery-thumbnails--overflow-top="context.thumbnailsOverflow.top"
 			data-wp-class--wc-block-product-gallery-thumbnails--overflow-bottom="context.thumbnailsOverflow.bottom"
 			data-wp-class--wc-block-product-gallery-thumbnails--overflow-left="context.thumbnailsOverflow.left"
 			data-wp-class--wc-block-product-gallery-thumbnails--overflow-right="context.thumbnailsOverflow.right">
 			<div
 				class="wc-block-product-gallery-thumbnails__scrollable"
-				data-wp-init="callbacks.initResizeObserver"
+				data-wp-init--init-resize-observer="callbacks.initResizeObserver"
+				data-wp-init--hide-ghost-overflow="callbacks.hideGhostOverflow"
 				data-wp-on--scroll="actions.onScroll"
 				role="listbox">
 				<?php foreach ( $product_gallery_images as $index => $image ) : ?>
@@ -109,7 +98,7 @@ class ProductGalleryThumbnails extends AbstractBlock {
 							alt="<?php echo esc_attr( $image['alt'] ); ?>"
 							data-wp-on--click="actions.selectCurrentImage"
 							data-wp-on--keydown="actions.onThumbnailsArrowsKeyDown"
-							data-wp-watch="callbacks.toggleActiveThumbnailAttributes"
+							data-wp-watch="callbacks.syncThumbnailState"
 							decoding="async"
 							tabindex="<?php echo 0 === $index ? '0' : '-1'; ?>"
 							draggable="false"

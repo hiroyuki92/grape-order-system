@@ -1,4 +1,165 @@
-/* global shippingZoneMethodsLocalizeScript, ajaxurl */
+/**
+ * Number validation utilities for WooCommerce shipping forms
+ */
+
+/**
+ * Validates formatted number strings with support for different locales and formulas
+ *
+ * @param {string} value - The value to validate
+ * @param {Object} config - Configuration object with decimal and thousand separators
+ * @param {string} config.decimalSeparator - Decimal separator (e.g., '.' or ',')
+ * @param {string} config.thousandSeparator - Thousand separator (e.g., ',' or ' ' or '.')
+ * @returns {boolean} Whether the value is a valid formatted number or formula
+ */
+function isValidFormattedNumber( value, config ) {
+    // Ensure we are dealing with a string; non-strings are invalid.
+    if ( typeof value !== 'string' ) {
+        return false;
+    }
+
+    // Treat empty input as valid so optional fields (e.g. Flat rate main cost)
+    // can be saved as blank to rely on class-only costs.
+    // This preserves 10.0.x behavior where blank values were allowed.
+    if ( value.trim() === '' ) {
+        return true;
+    }
+
+    // For non-empty values, require a config object.
+    if ( ! config || typeof config !== 'object' ) {
+        return false;
+    }
+
+	var decimalSeparator = config.decimalSeparator || '.';
+	var thousandSeparator = config.thousandSeparator || ',';
+
+	// Prepare regex to match numbers with the given separators
+	var escapedThousand = thousandSeparator.replace(
+		/[.*+?^${}()|[\]\\]/g,
+		'\\$&'
+	);
+	var escapedDecimal = decimalSeparator.replace(
+		/[.*+?^${}()|[\]\\]/g,
+		'\\$&'
+	);
+	var regex = new RegExp(
+		"([0-9,.' " + escapedDecimal + escapedThousand + ']+)',
+		'g'
+	);
+
+	// Find all possible number matches in the value
+	const matches = ( value.match( regex ) || [] )
+		.map( ( num ) => num.trim() )
+		.filter( ( num ) => num !== '' );
+
+	// If no numbers found, check if it's a shortcode format.
+	if ( 0 === matches.length ) {
+		// Check if the value is a shortcode format like [qty] or [cost]
+		const shortcodeRegex = /^\[([a-zA-Z0-9_"'= ]+)\]/;
+		return shortcodeRegex.test( value );
+	}
+
+	// Check if all matches are valid numbers with the correct separators
+	return matches.every( ( num ) => {
+		if ( ! num || num.length === 0 || ! num[ 0 ].match( /\d/ ) ) {
+			return false; // If the first character is not a digit, it's invalid
+		}
+		// Extract the separators used in the number
+		const usedSeparators = num.match( /([^0-9])+/g );
+		if ( ! usedSeparators ) return true; // No separators found, a valid number.
+		// Get the last separator used, which is assumed to be the decimal separator
+		const usedDecimalSeparator = usedSeparators.pop();
+
+		// If there are remaining separators, they should all be the same, and equal to the thousand separator
+		if ( usedSeparators.length > 0 ) {
+			// Check if remaining separators are all the same (thousand separator)
+			const uniqueSeparators = new Set( usedSeparators );
+			if ( uniqueSeparators.size > 1 ) {
+				return false; // Invalid separators used
+			}
+
+			// If all remaining separators are the same, they should match the thousand separator
+			if ( usedSeparators[ 0 ] !== thousandSeparator ) {
+				return false; // Invalid separator used
+			}
+		}
+
+		if ( usedDecimalSeparator.trim() !== decimalSeparator.trim() ) {
+			// If the last separator is not the decimal separator, it must be the thousand separator
+            if ( usedDecimalSeparator.trim() !== thousandSeparator.trim() ) {
+                return false; // Invalid separator used
+            }
+            // Check if the last group has exactly 3 digits for thousand separator
+            const lastGroup = num.split( usedDecimalSeparator ).pop();
+            if ( ! lastGroup || lastGroup.length !== 3 || ! /^\d{3}$/.test( lastGroup ) ) {
+                return false; // Invalid thousand separator format
+            }
+		}
+
+		return true; // Valid decimal.
+	} ); // All decimals use the correct separator
+}
+
+// Export for different module systems
+if ( typeof module !== 'undefined' && module.exports ) {
+	// CommonJS (Node.js)
+	module.exports = { isValidFormattedNumber };
+} else if ( typeof define === 'function' && define.amd ) {
+	// AMD
+	define( [], function () {
+		return { isValidFormattedNumber };
+	} );
+} else {
+	// Browser global
+	window.WCNumberValidation = { isValidFormattedNumber };
+}
+
+/**
+ * Maybe modify decimal utility for WooCommerce shipping forms
+ */
+
+/**
+ * Maybe modify decimal for WooCommerce shipping forms
+ *
+ * @param {string} value - The value to modify
+ * @param {Object} config - Configuration object with decimal separator
+ * @param {string} config.decimalSeparator - Decimal separator (e.g., '.' or ',')
+ * @returns {string} The (possibly modified) value
+ */
+function maybeModifyDecimal( value, config ) {
+	// Check if value is a string and config is provided
+	if (
+		! value
+		|| typeof value !== 'string'
+		|| ! config
+		|| typeof config !== 'object'
+		|| ! config.decimalSeparator
+	) {
+		return value;
+	}
+
+	// Formula detection regex matches: brackets [], parentheses (), operators */+-, quotes "', and letters a-z and A-Z.
+	const formulaRegex = /[\[\]()\*\+\-\/\"'a-zA-Z]/;
+	if ( ! formulaRegex.test( value ) && '.' !== config.decimalSeparator && value.includes( '.' ) ) {
+		return value.replace( '.', config.decimalSeparator );
+	}
+	return value;
+}
+
+// Export for different module systems
+if ( typeof module !== 'undefined' && module.exports ) {
+	// CommonJS (Node.js)
+	module.exports = { maybeModifyDecimal };
+} else if ( typeof define === 'function' && define.amd ) {
+	// AMD
+	define( [], function () {
+		return { maybeModifyDecimal };
+	} );
+} else {
+	// Browser global
+	window.WCMaybeModifyDecimal = { maybeModifyDecimal };
+}
+
+/* global shippingZoneMethodsLocalizeScript, ajaxurl, WCNumberValidation, WCMaybeModifyDecimal */
 ( function( $, data, wp, ajaxurl ) {
 	$( function() {
 		var $table          = $( '.wc-shipping-zone-methods' ),
@@ -506,7 +667,17 @@
 
 					priceInputs.each( ( i ) => {
 						const priceInput = $( priceInputs[ i ] );
-						const value = parseFloat( priceInput.attr( 'value' ) );
+						let value = priceInput.attr( 'value' );
+						// Cost values are saved to the DB with thousands separators stripped and decimal separators converted to a dot.
+						// If value is not a formula, then we need to check for incorrect decimal separator in the value returned
+						// from the DB, and replace it with the correct one before passing it to the localiseMonetaryValue function.
+						// Note: Negative flat rate shipping cost numbers are not supported.
+						try {
+							value = WCMaybeModifyDecimal.maybeModifyDecimal( value, config );
+						} catch ( error ) {
+							// There was an error modifying the decimal, so we leave the original value as-is.
+							return;
+						}
 						const formattedValue = window.wc.currency.localiseMonetaryValue( config, value );
 						priceInput.attr( 'value', formattedValue );
 					} );
@@ -678,7 +849,6 @@
 						event.data.view.possiblyAddShippingClassLink( event );
 						if ( window.wc.wcSettings.CURRENCY && window.wc.currency.localiseMonetaryValue ) {
 							const config = window.wc.wcSettings.CURRENCY;
-							const isValidFormattedNumber = event.data.view.isValidFormattedNumber;
 							$('.wc-shipping-modal-price').on( 'input', function() {
 								// When the user types, we validate the value.
 								const value = $(this).val();
@@ -687,7 +857,7 @@
 								const modal = $( this ).parents( '.wc-backbone-modal-main' );
 								modal.find( '#btn-ok' ).removeAttr( 'disabled' );
 								modal.find( '.wc-shipping-method-add-class-costs').show();
-								if ( ! isValidFormattedNumber( value, config ) ) {
+								if ( ! WCNumberValidation.isValidFormattedNumber( value, config ) ) {
 									$(this).addClass( 'wc-shipping-invalid-price' );
 									$('<span class="wc-shipping-zone-method-fields-help-text wc-shipping-invalid-price-message">'
 										+ shippingZoneMethodsLocalizeScript.strings.invalid_number_format
@@ -718,30 +888,6 @@
 						const link = article.find( '.wc-shipping-method-add-class-costs' );
 						link.css( 'display', 'block' );
 					}
-				},
-				isValidFormattedNumber: function(value, config) {
-					if ( ! value || typeof value !== 'string' || ! config ) {
-						return false;
-					}
-
-					var decimalSeparator = config.decimalSeparator || '.';
-					var thousandSeparator = config.thousandSeparator || ',';
-					var escapedThousand = thousandSeparator.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-					var escapedDecimal = decimalSeparator.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-					// Accept either:
-					// - digits with optional thousands separator (1[ts]234[ts]567[ds]89)
-					// - OR plain digits without any separators (1234567[ds]89)
-					var regex = new RegExp(
-						'^(' +
-						'\\d{1,3}(?:' + escapedThousand + '\\d{3})+' + // with thousand separator
-						'|' +
-						'\\d+' + // or just plain digits
-						')' +
-						'(' + escapedDecimal + '\\d+)?$' // optional decimal part
-					);
-
-					return regex.test(value.trim());
 				},
 				validateFormArguments: function( event, target, data ) {
 					if ( target === 'wc-modal-add-shipping-method' ) {

@@ -7,12 +7,13 @@
 
 namespace Automattic\WooCommerce\Admin\API;
 
+use Automattic\WooCommerce\Admin\Features\Features;
+use Automattic\WooCommerce\Admin\Features\OnboardingTasks\DeprecatedExtendedTask;
+use Automattic\WooCommerce\Admin\Features\OnboardingTasks\TaskLists;
 use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Internal\Admin\Onboarding\OnboardingIndustries;
 use Automattic\WooCommerce\Internal\Admin\Onboarding\OnboardingProfile;
-use Automattic\WooCommerce\Admin\Features\Features;
-use Automattic\WooCommerce\Admin\Features\OnboardingTasks\TaskLists;
-use Automattic\WooCommerce\Admin\Features\OnboardingTasks\DeprecatedExtendedTask;
+use Automattic\WooCommerce\Internal\Utilities\ProductUtil;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -441,7 +442,7 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 	 * @return string Block content.
 	 */
 	private static function get_homepage_cover_block( $image ) {
-		$shop_url = get_permalink( wc_get_page_id( 'shop' ) );
+		$shop_url = wc_get_page_permalink( 'shop' );
 		if ( ! empty( $image['url'] ) && ! empty( $image['id'] ) ) {
 			return '<!-- wp:cover {"url":"' . esc_url( $image['url'] ) . '","id":' . intval( $image['id'] ) . ',"dimRatio":0} -->
 			<div class="wp-block-cover" style="background-image:url(' . esc_url( $image['url'] ) . ')"><div class="wp-block-cover__inner-container"><!-- wp:paragraph {"align":"center","placeholder":"' . __( 'Write title…', 'woocommerce' ) . '","textColor":"white","fontSize":"large"} -->
@@ -512,8 +513,8 @@ class OnboardingTasks extends \WC_REST_Data_Controller {
 	 * @return string Template contents.
 	 */
 	private static function get_homepage_template( $post_id ) {
-		$products = wp_count_posts( 'product' );
-		if ( $products->publish >= 4 ) {
+		$products = wc_get_container()->get( ProductUtil::class )->get_counts_for_type( 'product' );
+		if ( ( $products[ ProductStatus::PUBLISH ] ?? 0 ) >= 4 ) {
 			$images   = self::sideload_homepage_images( $post_id, 1 );
 			$image_1  = ! empty( $images[0] ) ? $images[0] : '';
 			$template = self::get_homepage_cover_block( $image_1 ) . '

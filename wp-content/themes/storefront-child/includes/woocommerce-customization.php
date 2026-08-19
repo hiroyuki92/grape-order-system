@@ -163,6 +163,16 @@ function make_checkout_phone_required($fields) {
     return $fields;
 }
 
+// address-i18n.js が国別ロケールデータで電話ラベルを「電話」に上書きしてしまうのを防ぐ
+// WC()->countries->get_country_locale_field_selectors() の 'phone' セレクタを外すことで、
+// address-i18n.js の country_to_state_changing ハンドラが #billing_phone_field / #shipping_phone_field の
+// ラベルを書き換えなくなる（国別に電話ラベルを変える必要はないサイトのため無害）
+add_filter('woocommerce_country_locale_field_selectors', 'remove_phone_from_locale_field_selectors');
+function remove_phone_from_locale_field_selectors($selectors) {
+    unset($selectors['phone']);
+    return $selectors;
+}
+
 // 電話番号フィールドの表示設定（WooCommerceの全体設定）を「必須」に統一
 // これを設定しないとフィールド個別のrequired上書きだけでは「(オプション)」表記が残ってしまう
 add_action('init', 'force_phone_field_visibility_required');

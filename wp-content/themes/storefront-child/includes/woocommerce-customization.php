@@ -135,6 +135,18 @@ function hide_downloads_tab($items) {
 add_filter('woocommerce_billing_fields', 'make_billing_phone_required');
 function make_billing_phone_required($fields) {
     $fields['billing_phone']['required'] = true;
+    if (isset($fields['billing_phone']['label'])) {
+        $fields['billing_phone']['label'] = '電話番号';
+    }
+    return $fields;
+}
+
+// お届け先の電話番号ラベルも統一
+add_filter('woocommerce_shipping_fields', 'update_shipping_phone_label');
+function update_shipping_phone_label($fields) {
+    if (isset($fields['shipping_phone']['label'])) {
+        $fields['shipping_phone']['label'] = '電話番号';
+    }
     return $fields;
 }
 
@@ -142,6 +154,12 @@ function make_billing_phone_required($fields) {
 add_filter('woocommerce_checkout_fields', 'make_checkout_phone_required');
 function make_checkout_phone_required($fields) {
     $fields['billing']['billing_phone']['required'] = true;
+    if (isset($fields['billing']['billing_phone']['label'])) {
+        $fields['billing']['billing_phone']['label'] = '電話番号';
+    }
+    if (isset($fields['shipping']['shipping_phone']['label'])) {
+        $fields['shipping']['shipping_phone']['label'] = '電話番号';
+    }
     return $fields;
 }
 

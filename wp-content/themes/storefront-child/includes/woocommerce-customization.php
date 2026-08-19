@@ -145,6 +145,15 @@ function make_checkout_phone_required($fields) {
     return $fields;
 }
 
+// 電話番号フィールドの表示設定（WooCommerceの全体設定）を「必須」に統一
+// これを設定しないとフィールド個別のrequired上書きだけでは「(オプション)」表記が残ってしまう
+add_action('init', 'force_phone_field_visibility_required');
+function force_phone_field_visibility_required() {
+    if (get_option('woocommerce_checkout_phone_field') !== 'required') {
+        update_option('woocommerce_checkout_phone_field', 'required');
+    }
+}
+
 // 「別の住所へ配送」チェックボックスに説明テキストを追加
 add_action('wp_footer', 'add_shipping_checkbox_description');
 function add_shipping_checkbox_description() {
